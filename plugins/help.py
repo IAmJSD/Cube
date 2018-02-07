@@ -1,4 +1,4 @@
-import requests, discord
+import discord
 # Imports go here.
 
 async def help(app):
