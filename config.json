@@ -1,0 +1,13 @@
+{
+    "bot_name" : "Cube",
+    "version" : "1.0.0b1",
+    "token" : "",
+    "owner_server_id" : "",
+    "owner_user_id" : "",
+    "mysql_hostname" : "",
+    "mysql_username" : "",
+    "mysql_password" : "",
+    "mysql_db" : "cube",
+    "default_prefix" : "c!",
+    "game" : ""
+}
