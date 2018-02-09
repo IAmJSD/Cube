@@ -162,36 +162,30 @@ async def cmd_handler(msg):
             cmd = msg.content.lstrip(prefix).split(' ')[0].lower()
             if cmd in app.discord_commands:
                 allowed_to_run = True
-                try:
-                    requires_staff = app.discord_commands[cmd].requires_staff
-                except:
-                    requires_staff = False
-                try:
-                    requires_management = app.discord_commands[cmd].requires_management
-                except:
-                    requires_management = False
-                try:
-                    requires_bot_admin = app.discord_commands[cmd].requires_bot_admin
-                except:
-                    requires_bot_admin = False
-                if requires_staff:
-                    x = False
-                    for role in msg.author.roles:
-                        if "staff" in role.name.lower():
-                            x = True
-                    allowed_to_run = x
-                elif requires_management:
-                    x = False
-                    for role in msg.author.roles:
-                        if "managers" in role.name.lower() or "management" in role.name.lower():
-                            x = True
-                    allowed_to_run = x
-                elif requires_bot_admin:
-                    sql = "SELECT * FROM `bot_admins` WHERE `user_id` = %s"
-                    with app.mysql_connection.cursor() as cursor:
-                        cursor.execute(sql, (msg.author.id, ))
-                        allowed_to_run = not cursor.fetchone() is None
-                        cursor.close()
+                if hasattr(app.discord_commands[cmd], "requires_staff"):
+                    y = app.discord_commands[cmd].requires_staff
+                    if y:
+                        x = False
+                        for role in msg.author.roles:
+                            if "staff" in role.name.lower():
+                                x = True
+                        allowed_to_run = x
+                elif hasattr(app.discord_commands[cmd], "requires_management"):
+                    y = app.discord_commands[cmd].requires_management
+                    if y:
+                        x = False
+                        for role in msg.author.roles:
+                            if "managers" in role.name.lower() or "management" in role.name.lower():
+                                x = True
+                        allowed_to_run = x
+                elif hasattr(app.discord_commands[cmd], "requires_bot_admin"):
+                    y = app.discord_commands[cmd].requires_bot_admin
+                    if y:
+                        sql = "SELECT * FROM `bot_admins` WHERE `user_id` = %s"
+                        with app.mysql_connection.cursor() as cursor:
+                            cursor.execute(sql, (msg.author.id, ))
+                            allowed_to_run = not cursor.fetchone() is None
+                            cursor.close()
                 if allowed_to_run:
                     app_ctx = copy(app)
                     app_ctx.message = msg
