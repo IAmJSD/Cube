@@ -29,6 +29,8 @@ async def nuke(app):
                         return True
                     else:
                         return False
+                if amount > 100:
+                    amount = 100
                 del_msgs = await app.dclient.purge_from(app.message.channel, limit=amount, check=is_user_listed)
                 z = len(del_msgs)
                 if not user is None:
