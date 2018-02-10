@@ -16,6 +16,16 @@ CREATE TABLE IF NOT EXISTS `custom_commands` (
   `response` mediumtext COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS `custom_greetings` (
+  `server_id` text NOT NULL,
+  `message` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `custom_leave` (
+  `server_id` text NOT NULL,
+  `message` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC;
+
 CREATE TABLE IF NOT EXISTS `custom_prefixes` (
   `prefix` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `server_id` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL
@@ -59,6 +69,10 @@ CREATE TABLE IF NOT EXISTS `msg_logs` (
   `attachments` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `content` mediumtext COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `silenced_servers` (
+  `server_id` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `strikes` (
   `strike_id` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
