@@ -8,14 +8,14 @@ async def unsilence(app):
         silenced_count = cursor.fetchone()["silenced_count"]
         cursor.close()
     if silenced_count == 0:
-        await app.say(embed=discord.Embed(title=":smiley: Not silenced."))
+        await app.say(embed=discord.Embed(title="😃 Not silenced."))
     else:
         unsilence_sql = "DELETE FROM silenced_servers WHERE server_id = %s"
         with app.mysql_connection.cursor() as cursor:
             cursor.execute(unsilence_sql, (app.message.server.id,))
             cursor.close()
         app.mysql_connection.commit()
-        await app.say(embed=discord.Embed(title=":smiley: Unsilenced."))
+        await app.say(embed=discord.Embed(title="😃 Unsilenced."))
 # Allows you to unsilence the join/leave messages from the bot.
 
 unsilence.description = "Allows you to unsilence the join/leave messages from the bot."
