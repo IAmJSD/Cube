@@ -33,7 +33,7 @@ async def embed(app):
                     args = ' '.join(args)
                     e.description = args
                     await app.say("```Set description.```")
-            elif cmd == "colour":
+            elif cmd == "colour" or cmd == "color":
                 if args == []:
                     clr = ""
                 else:
