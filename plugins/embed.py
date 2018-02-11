@@ -6,7 +6,7 @@ async def embed(app):
     e = discord.Embed()
     x = True
     while x:
-        msg2 = await app.dclient.wait_for_message(author=app.message.author, timeout=30)
+        msg2 = await app.dclient.wait_for_message(author=app.message.author)
         if msg2 is None:
             x = False
         else:
