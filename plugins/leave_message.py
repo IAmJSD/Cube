@@ -30,7 +30,7 @@ async def leave_message(app):
         await app.say(embed=embed)
 # Allows you to set the leave message.
 
-leave_message.description = "Allows you to set the leave message. Use $server$ to repersent the server name and $user$ to repersent the user. if you want to remove the custom greeting, just use $rm$ on its own."
+leave_message.description = "Allows you to set the leave message. Use $server$ to represent the server name and $user$ to represent the user. if you want to remove the custom greeting, just use $rm$ on its own."
 # Sets a description for "leave_message".
 
 leave_message.requires_staff = True
