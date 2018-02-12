@@ -4,7 +4,7 @@ import discord
 async def leave_message(app):
     if app.args == []:
         embed=discord.Embed(title="I could not find any arguments.",
-                            description="Please supply the join message for arguments (using $user$ to repersent the user and $server$ to repersent the server).",
+                            description="Please supply the leave message for arguments (using $user$ to repersent the user and $server$ to repersent the server).",
                             color=0xff0000)
         embed.set_footer(text=app.premade_ver)
         await app.say(embed=embed)
