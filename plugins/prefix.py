@@ -19,7 +19,7 @@ async def prefix(app):
             cursor.close()
         app.mysql_connection.commit()
         if args == "$rm$":
-            args = app.config["bot_name"]
+            args = app.config["default_prefix"]
         main_title = "✓ New prefix set."
         main_desc = "`{}` has been set as the new prefix".format(args)
         main_colour = 0x00ff00
