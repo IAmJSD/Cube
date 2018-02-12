@@ -21,14 +21,14 @@ async def embed(app):
                 x = False
             elif cmd == "title":
                 if args == []:
-                    await app.say("```No argument found with the title.```")
+                    await app.say("```No arguement found with the title.```")
                 else:
                     args = ' '.join(args)
                     e.title = args
                     await app.say("```Set title.```")
             elif cmd == "description":
                 if args == []:
-                    await app.say("```No argument found with the description.```")
+                    await app.say("```No arguement found with the description.```")
                 else:
                     args = ' '.join(args)
                     e.description = args
@@ -57,32 +57,32 @@ async def embed(app):
                     await app.say("```Colour not found.```")
             elif cmd == "field":
                 if args == []:
-                    await app.say("```No arguments found.```")
+                    await app.say("```No arguements found.```")
                 else:
                     join_args = ' '.join(args)
                     pipe_split_args = [x.strip(' ') for x in join_args.split("|")]
                     if len(pipe_split_args) == 1:
-                        await app.say("```2 arguments were not found. Make sure you seperated them with a pipe (|) character.```")
+                        await app.say("```2 arguements were not found. Make sure you seperated them with a pipe (|) character.```")
                     else:
                         e.add_field(name=pipe_split_args[0], value=pipe_split_args[1], inline=True)
                         await app.say("```Set field.```")
             elif cmd == "footer":
                 if args == []:
-                    await app.say("```No argument found with the footer.```")
+                    await app.say("```No arguement found with the footer.```")
                 else:
                     args = ' '.join(args)
                     e.set_footer(text=args)
                     await app.say("```Set footer.```")
             elif cmd == "thumbnail_url":
                 if args == []:
-                    await app.say("```No argument found with the footer.```")
+                    await app.say("```No arguement found with the footer.```")
                 else:
                     join_args = ' '.join(args)
                     e.set_thumbnail(url=join_args)
                     await app.say("```Set the thumbnail URL.```")
             elif cmd == "send":
                 if args == []:
-                    await app.say("```No argument found to send the embed to.```")
+                    await app.say("```No arguement found to send the embed to.```")
                 else:
                     c = app.message.server.get_channel(args[0].lstrip('<#').rstrip('>'))
                     if c is None:
