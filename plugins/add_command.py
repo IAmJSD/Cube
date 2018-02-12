@@ -4,14 +4,14 @@ import discord
 async def add_command(app):
     if app.args == []:
         embed=discord.Embed(title="I could not find any arguments.", 
-            description="Please supply the command first and then the resonse. For instance using the default prefix as an example, `{}add_command command description`.".format(app.config["default_prefix"]),
+            description="Please supply the command first and then the response. For instance using the default prefix as an example, `{}add_command command description`.".format(app.config["default_prefix"]),
             color=0xff0000)
         embed.set_footer(text=app.premade_ver)
         await app.say(embed=embed)
     else:
         if len(app.args) == 1:
             embed=discord.Embed(title="I could not find a response.", 
-                description="Please provide one for the second argument.",
+                description="Please provide one for the second arguement.",
                 color=0xff0000)
             embed.set_footer(text=app.premade_ver)
             await app.say(embed=embed)
@@ -45,7 +45,7 @@ async def add_command(app):
                 await app.attempt_log(app.message.server.id, embed)
 # Allows you to set a custom command.
 
-add_command.description = "Allows you to set a custom command. Use $args$ to repersent any arguments for the command."
+add_command.description = "Allows you to set a custom command. Use $args$ to represent any arguements for the command."
 # Sets a description for "add_command".
 
 add_command.requires_staff = True
