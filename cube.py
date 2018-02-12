@@ -175,7 +175,7 @@ async def cmd_handler(msg):
                     if y:
                         x = False
                         for role in msg.author.roles:
-                            if "managers" in role.name.lower() or "management" in role.name.lower():
+                            if "manager" in role.name.lower() or "management" in role.name.lower():
                                 x = True
                         allowed_to_run = x
                 elif hasattr(app.discord_commands[cmd], "requires_bot_admin"):
