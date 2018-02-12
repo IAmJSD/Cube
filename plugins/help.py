@@ -25,34 +25,35 @@ async def help(app):
     x = [discord.Embed(title="Cube Help:")]
     f = 0
 
+    for cmd in app.discord_commands:
+        show = True
+        try:
+            if app.discord_commands[cmd].requires_staff and not is_staff:
+                show = False
+        except:
+            pass
+        try:
+            if app.discord_commands[cmd].requires_management and not is_management:
+                show = False
+        except:
+            pass
+        try:
+            if app.discord_commands[cmd].requires_bot_admin and not is_bot_admin:
+                show = False
+        except:
+            pass
+        if show:
+            try:
+                desc = app.discord_commands[cmd].description
+            except:
+                desc = "No description found."
+            if f == 10:
+                x.append(discord.Embed())
+                f = 0
+            x[-1].add_field(name=prefix + cmd, value=desc, inline=False)
+            f = f + 1
+
     try:
-        for cmd in app.discord_commands:
-            show = True
-            try:
-                if app.discord_commands[cmd].requires_staff and not is_staff:
-                    show = False
-            except:
-                pass
-            try:
-                if app.discord_commands[cmd].requires_management and not is_management:
-                    show = False
-            except:
-                pass
-            try:
-                if app.discord_commands[cmd].requires_bot_admin and not is_bot_admin:
-                    show = False
-            except:
-                pass
-            if show:
-                try:
-                    desc = app.discord_commands[cmd].description
-                except:
-                    desc = "No description found."
-                if f == 10:
-                    x.append(discord.Embed())
-                    f = 0
-                x[-1].add_field(name=prefix + cmd, value=desc, inline=False)
-                f = f + 1
         for y in x:
             await app.whisper(embed=y)
         await app.say(embed=discord.Embed(title="📬 Check DM's"))
