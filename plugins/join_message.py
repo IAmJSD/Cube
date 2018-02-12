@@ -30,7 +30,7 @@ async def join_message(app):
         await app.say(embed=embed)
 # Allows you to set the join message.
 
-join_message.description = "Allows you to set the join message. Use $server$ to repersent the server name and $user$ to repersent the user. if you want to remove the custom greeting, just use $rm$ on its own."
+join_message.description = "Allows you to set the join message. Use $server$ to represent the server name and $user$ to represent the user. if you want to remove the custom greeting, just use $rm$ on its own."
 # Sets a description for "join_message".
 
 join_message.requires_staff = True
