@@ -3,13 +3,13 @@ import discord
 
 async def ban(app):
     if app.args == []:
-        embed=discord.Embed(title="No user found.", description="Please provide the user and the ban reason as arguments.", color=0xff0000)
+        embed=discord.Embed(title="No user found.", description="Please provide the user and the ban reason as arguements.", color=0xff0000)
         embed.set_footer(text=app.premade_ver)
         await app.say(embed=embed)
     else:
         user = app.pass_user(app.args[0], app.message.server)
         if user is None:
-            embed=discord.Embed(title="User not found.", description="Please make sure you give the user as the first argument and they are a valid user.", color=0xff0000)
+            embed=discord.Embed(title="User not found.", description="Please make sure you give the user as the first arguement and they are a valid user.", color=0xff0000)
             embed.set_footer(text=app.premade_ver)
             await app.say(embed=embed)
         else:
