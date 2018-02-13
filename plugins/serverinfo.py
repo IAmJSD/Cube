@@ -2,7 +2,7 @@ import discord
 # Imports go here.
 
 async def serverinfo(app):
-    embed=discord.Embed(title="Info About {}:".format(app.message.server.name))
+    embed=discord.Embed(title="Info About {}:".format(app.message.server.name) color=0x1bb3e4)
     embed.set_thumbnail(url=app.message.server.icon_url)
     embed.add_field(name="Server ID:", value=app.message.server.id, inline=False)
     embed.add_field(name="Server Owner:", value=app.message.server.owner.mention, inline=False)
