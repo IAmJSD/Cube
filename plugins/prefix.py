@@ -2,7 +2,7 @@ import discord
 # Imports go here.
 
 async def prefix(app):
-    args = ' '.join(app.args)
+    args = ' '.join(app.args).split(' ')[0] 
     if args == "":
         embed=discord.Embed(title="What do you want it to be?", 
                     description="I couldn't find any arguments to set as the prefix.",
