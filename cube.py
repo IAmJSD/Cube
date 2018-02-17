@@ -349,15 +349,15 @@ async def on_member_update(before, after):
 @dclient.event
 async def on_server_join(server):
     members = 0
-	bots = 0
-	for m in server.members:
-		if m.bot:
-			bots = bots + 1
-		members = members + 1
-	percentage_bots = 100 * float(bots) / float(members)
-	if percentage_bots >= 75:
-		await dclient.leave_server(server)
-        	return
+    bots = 0
+    for m in server.members:
+        if m.bot:
+            bots = bots + 1
+        members = members + 1
+    percentage_bots = 100 * float(bots) / float(members)
+    if percentage_bots >= 75:
+        await dclient.leave_server(server)
+        return
     if "on_server_join" in app.discord_callbacks:
         for i in app.discord_callbacks["on_server_join"]:
             try:
