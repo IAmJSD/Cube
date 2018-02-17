@@ -357,7 +357,7 @@ async def on_server_join(server):
 	percentage_bots = 100 * float(bots) / float(members)
 	if percentage_bots >= 75:
 		await dclient.leave_server(server)
-        return
+        	return
     if "on_server_join" in app.discord_callbacks:
         for i in app.discord_callbacks["on_server_join"]:
             try:
