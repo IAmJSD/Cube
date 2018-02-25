@@ -1,40 +1,37 @@
-import discord
-# Imports go here.
+# Cube. Copyright (C) Jake Gealer <jake@gealer.email> 2017-2018.
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-async def main_channel(app):
-    channel = app.pass_channel(app.args[0])
-    if channel is None:
-        embed=discord.Embed(title="Well this is awkward.", 
-                            description="I couldn't find the channel you tagged.",
-                            color=0xff0000)
-        embed.set_footer(text=app.premade_ver)
-        await app.say(embed=embed)
-    else:
-        try:
-            msg = await app.dclient.send_message(channel, "This is a test of inputing and deleting messages into the main channel.")
-            await app.dclient.delete_message(msg)
-            del_sql = "DELETE FROM main_channels WHERE server_id = %s"
-            insert_sql = "INSERT INTO main_channels (server_id, channel_id) VALUES (%s, %s)"
-            with app.mysql_connection.cursor() as cursor:
-                cursor.execute(del_sql, (app.message.server.id, ))
-                cursor.execute(insert_sql, (app.message.server.id, channel.id, ))
-                cursor.close()
-            app.mysql_connection.commit()
-            embed=discord.Embed(title="✓ Done!", 
-                    description="I set the main channel to {}.".format(channel.mention),
-                    color=0x00ff00)
-            embed.set_footer(text=app.premade_ver)
-            await app.say(embed=embed)
-        except discord.HTTPException:
-            embed=discord.Embed(title="Ermmmmmmmm.", 
-                    description="I couldn't post a test message to that channel.",
-                    color=0xff0000)
-            embed.set_footer(text=app.premade_ver)
-            await app.say(embed=embed)
-# Sets the logging channel.
+def Plugin(app):
 
-main_channel.description = "Sets the main channel."
-# Sets a description for "main_channel".
-
-main_channel.requires_management = True
-# Sets that this script requires the "Management" role.
+    @app.command("Allows you to set a main channel (Used for things like join/leave messages).", requires_management=True, usage="[channel]")
+    async def main_channel(app):
+        if app.args == []:
+            await app.say(embed=app.create_embed("Could not find arguments.",
+                                "Please provide arguments for this command.",
+                                                                error=True))
+        else:
+            channel = app.pass_channel(app.args[0], app.message.guild)
+            if channel is None:
+                await app.say(embed=app.create_embed("Could not find the channel.",
+                            "Make sure you tag the channel as your first argument.",
+                                                                        error=True))
+            else:
+                try:
+                    test_msg = await channel.send("This is a test of the main channel.")
+                    await test_msg.delete()
+                except:
+                    await app.say(embed=app.create_embed("Could not send a test message.",
+                        "Make sure the bot has read and write permssions to the channel.",
+                                                                            error=True))
+                    return
+                await app.run_mysql("DELETE FROM main_channels WHERE server_id = %s", (app.message.guild.id, ), commit=True)
+                await app.run_mysql("INSERT INTO main_channels (server_id, channel_id) VALUES (%s, %s)",
+                                                    (app.message.guild.id, channel.id, ), commit=True)
+                embed = app.create_embed("Main channel set:",
+                f"{app.message.author.mention} set the main channel to {channel.mention}.",
+                success=True)
+                await app.say(embed=embed)
+                await app.attempt_log(app.message.guild.id, embed=embed)
+    # Allows you to set a main channel (Used for things like join/leave messages).

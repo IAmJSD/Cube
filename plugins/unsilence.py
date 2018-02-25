@@ -1,25 +1,18 @@
+# Cube. Copyright (C) Jake Gealer <jake@gealer.email> 2017-2018.
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
 import discord
 # Imports go here.
 
-async def unsilence(app):
-    silenced_count_sql = "SELECT COUNT(*) AS silenced_count FROM silenced_servers WHERE server_id = %s"
-    with app.mysql_connection.cursor() as cursor:
-        cursor.execute(silenced_count_sql, (app.message.server.id,))
-        silenced_count = cursor.fetchone()["silenced_count"]
-        cursor.close()
-    if silenced_count == 0:
-        await app.say(embed=discord.Embed(title="😃 Not silenced."))
-    else:
-        unsilence_sql = "DELETE FROM silenced_servers WHERE server_id = %s"
-        with app.mysql_connection.cursor() as cursor:
-            cursor.execute(unsilence_sql, (app.message.server.id,))
-            cursor.close()
-        app.mysql_connection.commit()
-        await app.say(embed=discord.Embed(title="😃 Unsilenced."))
-# Allows you to unsilence the join/leave messages from the bot.
+def Plugin(app):
 
-unsilence.description = "Allows you to unsilence the join/leave messages from the bot."
-# Sets a description for "unsilence".
-
-unsilence.requires_staff = True
-# Set that this script requires staff.
+    @app.command("Allows you to unsilence the join/leave messages from the bot.", requires_management=True)
+    async def unsilence(app):
+        if (await app.run_mysql("SELECT COUNT(*) AS silenced_count FROM silenced_servers WHERE server_id = %s", (app.message.guild.id, ), get_one=True))[0] == 0:
+            await app.say(embed=discord.Embed(title="😃 Not silenced."))
+        else:
+            await app.run_mysql("DELETE FROM silenced_servers WHERE server_id = %s", (app.message.guild.id, ), commit=True)
+            await app.say(embed=discord.Embed(title="😃 Unsilenced."))
+    # Allows you to unsilence the join/leave messages from the bot.

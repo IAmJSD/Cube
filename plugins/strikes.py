@@ -1,42 +1,30 @@
-import discord
-# Imports go here.
+# Cube. Copyright (C) Jake Gealer <jake@gealer.email> 2017-2018.
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-async def strikes(app):
-    if len(app.args) != 0 and app.pass_user(app.args[0], app.message.server) == None:
-        embed=discord.Embed(title="I could not find that user.", 
-        description="Try tagging the user again or if you want yourself just run the command with no arguments.",
-        color=0xff0000)
-        embed.set_footer(text=app.premade_ver)
-        await app.say(embed=embed)
-    else:
-        if len(app.args) == 0:
-            user = app.message.author
+def Plugin(app):
+
+    @app.command("Allows you to list strikes to a user.", usage="[user] (Optional)")
+    async def strikes(app):
+        if len(app.args) != 0 and app.pass_user(app.message.guild, app.args[0]) is None:
+            await app.say(embed=app.create_embed("Could not find the user.", "Make sure you tag the user as your first argument or leave it blank.", error=True))
         else:
-            user = app.pass_user(app.args[0], app.message.server)
-        strike_count_sql = "SELECT COUNT(*) AS COUNT FROM strikes WHERE user_id = %s AND server_id = %s"
-        get_strikes_sql = "SELECT * FROM strikes WHERE user_id = %s AND server_id = %s"
-        with app.mysql_connection.cursor() as cursor:
-            cursor.execute(strike_count_sql, (user.id, app.message.server.id, ))
-            strike_count = cursor.fetchone()["COUNT"]
-            cursor.execute(get_strikes_sql, (user.id, app.message.server.id, ))
-            strike_list = cursor.fetchall()
-            cursor.close()
-        embed=discord.Embed(title="Strikes for {}:".format(user.name), 
-        description="{} has {} strike(s) in {}.".format(user.name, strike_count, app.message.server.name),
-        colour=user.colour)
-        embed.set_footer(text=app.premade_ver)
-        for strike in strike_list:
-            if strike["strike_reason"] == "":
-                strike["strike_reason"] = "[No strike reason]"
-            staff = app.pass_user(strike["staff_id"], app.message.server)
-            if staff is None:
-                staff_formatted = "{} [No longer in the server]".format(strike["staff_id"])
+            if app.args == []:
+                user = app.message.author
             else:
-                staff_formatted = "{}".format(staff.name)
-            embed.add_field(name="{} (Added by {}):".format(strike["strike_id"], staff_formatted),
-            value=strike["strike_reason"], inline=False)
-        await app.say(embed=embed)
-# Allows you to list strikes to a user.
-
-strikes.description = "Allows you to list strikes to a user."
-# Sets a description for "strikes".
+                user = app.pass_user(app.message.guild, app.args[0])
+            strikes = await app.run_mysql("SELECT * FROM strikes WHERE user_id = %s AND server_id = %s", (user.id, app.message.guild.id, ), get_many=True)
+            embed = app.create_embed(f"Strikes for {user.name}:", f"{user.name} has {len(strikes)} strike(s) in {app.message.guild.name}.")
+            embed.colour = user.colour
+            for s in strikes:
+                if s[4] == "":
+                    s[4] = "No strike reason."
+                staff = app.pass_user(app.message.guild, s[1])
+                if staff is None:
+                    staff_formatted = f"{s[1]} [No longer in the server]"
+                else:
+                    staff_formatted = f"{staff.name} [{staff.id}]"
+                embed.add_field(name=f"{s[0]} (Added by {staff_formatted}):", value=s[4], inline=False)
+            await app.say(embed=embed)
+    # Allows you to list strikes to a user.

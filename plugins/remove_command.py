@@ -1,43 +1,29 @@
-import discord
-# Imports go here.
+# Cube. Copyright (C) Jake Gealer <jake@gealer.email> 2017-2018.
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-async def remove_command(app):
-    if app.args == []:
-        embed=discord.Embed(title="I could not find any arguments.", 
-                            description="Please supply the command you want to delete.",
-                            color=0xff0000)
-        embed.set_footer(text=app.premade_ver)
-        await app.say(embed=embed)
-    else:
-        command = app.args[0].lower()
-        cmd_count_sql = "SELECT COUNT(*) AS COUNT FROM custom_commands WHERE server_id = %s AND command = %s"
-        with app.mysql_connection.cursor() as cursor:
-            cursor.execute(cmd_count_sql, (app.message.server.id, command, ))
-            cmd_count = cursor.fetchone()["COUNT"]
-            cursor.close()
-        if cmd_count == 0:
-            embed=discord.Embed(title="I could not find any commands.", 
-                                description="I could not find a command named `{}`.".format(command),
-                                color=0xff0000)
-            embed.set_footer(text=app.premade_ver)
-            await app.say(embed=embed)
+def Plugin(app):
+
+    @app.command("Allows you to delete a custom command.", requires_management=True, usage="[command]")
+    async def remove_command(app):
+        if app.args == []:
+            await app.say(embed=app.create_embed("Could not find arguments.",
+                                "Please provide arguments for this command.",
+                                                                error=True))
         else:
-            cmd_delete_sql = "DELETE FROM custom_commands WHERE server_id = %s AND command = %s"
-            with app.mysql_connection.cursor() as cursor:
-                cursor.execute(cmd_delete_sql, (app.message.server.id, command, ))
-                cursor.close()
-            generic_desc = "`{}` has been deleted".format(command)
-            embed=discord.Embed(title="✓ Custom command removed.", 
-                    description="{}.".format(generic_desc),
-                    color=0x00ff00)
-            embed.set_footer(text=app.premade_ver)
-            await app.say(embed=embed)
-            embed=discord.Embed(title="Custom command added.", description="{} by `{}`.".format(generic_desc, app.message.author.name))
-            await app.attempt_log(app.message.server.id, embed)
-# Allows you to remove a custom command.
-
-remove_command.description = "Allows you to remove a custom command."
-# Sets a description for "remove_command".
-
-remove_command.requires_staff = True
-# Set that this script requires staff.
+            command = app.args[0]
+            response = ' '.join(app.args[1:])
+            cmd_count = (await app.run_mysql("SELECT COUNT(*) AS COUNT FROM custom_commands WHERE server_id = %s AND command = %s",
+                        (app.message.guild.id, command, ), get_one=True))[0]
+            if cmd_count == 0:
+                await app.say(embed=app.create_embed("Command doesn't exist.",
+                            f"`{command}` doesn't exist anyway.", error=True))
+            else:
+                await app.run_mysql("DELETE FROM custom_commands WHERE server_id = %s AND command = %s",
+                                                        (app.message.guild.id, command, ), commit=True)
+                embed = app.create_embed("Custom command deleted:",
+                f"`{command}` was removed as a custom command by {app.message.author.mention}.", success=True)
+                await app.say(embed=embed)
+                await app.attempt_log(app.message.guild.id, embed=embed)
+    # Allows you to create a custom command.

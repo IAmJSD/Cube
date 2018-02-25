@@ -1,40 +1,28 @@
-import discord
-# Imports go here.
+# Cube. Copyright (C) Jake Gealer <jake@gealer.email> 2017-2018.
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-async def prefix(app):
-    args = ' '.join(app.args).split(' ')[0] 
-    if args == "":
-        embed=discord.Embed(title="What do you want it to be?", 
-                    description="I couldn't find any arguments to set as the prefix.",
-                    color=0xff0000)
-        embed.set_footer(text=app.premade_ver)
-        await app.say(embed=embed)
-    else:
-        del_sql = "DELETE FROM custom_prefixes WHERE server_id = %s"
-        insert_sql = "INSERT INTO custom_prefixes (prefix, server_id) VALUES (%s, %s)"
-        with app.mysql_connection.cursor() as cursor:
-            cursor.execute(del_sql, (app.message.server.id, ))
-            if args != "$rm$":
-                cursor.execute(insert_sql, (args, app.message.server.id, ))
-            cursor.close()
-        app.mysql_connection.commit()
-        if args == "$rm$":
-            args = app.config["default_prefix"]
-        main_title = "✓ New prefix set."
-        main_desc = "`{}` has been set as the new prefix".format(args)
-        main_colour = 0x00ff00
-        embed=discord.Embed(title=main_title, description=main_desc+".", color=main_colour)
-        embed.set_footer(text=app.premade_ver)
-        await app.say(embed=embed)
-        embed=discord.Embed(title=main_title, 
-        description="{} by {}.".format(main_desc, app.message.author.name), 
-        color=main_colour)
-        embed.set_footer(text=app.premade_ver)
-        await app.attempt_log(app.message.server.id, embed)
-# Allows you to set the bots prefix. Use $rm$ to remove the custom prefix.
+def Plugin(app):
 
-prefix.description = "Allows you to set the bots prefix. Use $rm$ to remove the custom prefix."
-# Sets a description for "prefix".
-
-prefix.requires_management = True
-# Set that this script requires management.
+    @app.command("Allows you to set the prefix.", requires_management=True, usage="[prefix] (or $rm$ to use the default prefix)")
+    async def prefix(app):
+        prefix = ' '.join(app.args)
+        if prefix == "":
+            await app.say(embed=app.create_embed("Could not find arguments.",
+                                "Please provide arguments for this command.",
+                                                                error=True))
+        else:
+            del_sql = "DELETE FROM custom_prefixes WHERE server_id = %s"
+            insert_sql = "INSERT INTO custom_prefixes (server_id, prefix) VALUES (%s, %s)"
+            await app.run_mysql(del_sql, (app.message.guild.id,), commit=True)
+            if prefix != "$rm$":
+                await app.run_mysql(insert_sql, (app.message.guild.id, prefix, ), commit=True)
+            else:
+                prefix = app.config["default_prefix"]
+            embed = app.create_embed("New prefix set:",
+            f"`{prefix}` was set as the new server prefix by {app.message.author.mention}.",
+            success=True)
+            await app.attempt_log(app.message.guild.id, embed=embed)
+            await app.say(embed=embed)
+    # Allows you to set the prefix.

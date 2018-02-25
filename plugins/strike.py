@@ -1,57 +1,49 @@
-import discord, random
+# Cube. Copyright (C) Jake Gealer <jake@gealer.email> 2017-2018.
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+import random
 # Imports go here.
 
-async def strike(app):
-    if app.args == []:
-        embed=discord.Embed(title="I could not find any arguments.",
-                    description="Please supply the user first and then the strike reason. For instance using the default prefix as an example, `{}strike @user reason`.".format(app.config["default_prefix"]),
-                    color=0xff0000)
-        embed.set_footer(text=app.premade_ver)
-        await app.say(embed=embed)
-    else:
-        user = app.pass_user(app.args[0], app.message.server)
-        if user == None:
-            embed=discord.Embed(title="Rest in pepperonis.",
-                                description="I couldn't find that user. Please make sure you put the user as the first argument.",
-                                color=0xff0000)
-            embed.set_footer(text=app.premade_ver)
-            await app.say(embed=embed)
+def Plugin(app):
+
+    @app.command("Allows you to strike a user.", requires_staff=True, usage="[user] [reason]")
+    async def strike(app):
+        if app.args == []:
+            await app.say(embed=app.create_embed("Could not find arguments.",
+                                "Please provide arguments for this command.",
+                                                                error=True))
         else:
-            del app.args[0]
-            args = ' '.join(app.args).strip('|').strip(' ')
-            x = True
-            while x:
-                charset = "0123456789"
-                strike_id_length = 10
-                strike_id = ""
-                while not len(strike_id) == strike_id_length:
-                    strike_id = strike_id + charset[random.randint(0, len(charset)-1)]
-                sql = "SELECT COUNT(*) AS COUNT FROM strikes WHERE strike_id = %s"
-                with app.mysql_connection.cursor() as cursor:
-                    cursor.execute(sql, (strike_id,))
-                    if cursor.fetchone()["COUNT"] == 0:
-                        x = False
-                    cursor.close()
-            insert_sql = "INSERT INTO strikes(strike_id, staff_id, user_id, server_id, strike_reason) VALUES (%s, %s, %s, %s, %s)"
-            strike_count_sql = "SELECT COUNT(*) AS COUNT FROM strikes WHERE user_id = %s AND server_id = %s"
-            with app.mysql_connection.cursor() as cursor:
-                cursor.execute(insert_sql, (strike_id, app.message.author.id, user.id, app.message.server.id, args, ))
-                cursor.execute(strike_count_sql, (user.id, app.message.server.id, ))
-                strike_count = cursor.fetchone()["COUNT"]
-                cursor.close()
-            embed=discord.Embed(title="✓ User stricken.",
-                                description="{} has been stricken for `{}`. They now have {} strike(s).".format(user.name, args, strike_count),
-                                color=0x00ff00)
-            embed.set_footer(text=app.premade_ver)
-            await app.say(embed=embed)
-            embed=discord.Embed(title="User stricken.",
-                                description="{} has been stricken by {} for `{}` in {}. They now have {} strike(s).".format(user.name, app.message.author.name, args,
-                                app.message.channel.name, strike_count))
-            await app.attempt_log(app.message.server.id, embed)
-# Allows you to strike a user.
-
-strike.description = "Allows you to strike a user."
-# Sets a description for "strike".
-
-strike.requires_staff = True
-# Set that this script requires staff.
+            user = app.pass_user(app.message.guild, app.args[0])
+            if user is None:
+                await app.say(embed=app.create_embed("Could not find the user.",
+                            "Make sure you tag the user as your first argument.",
+                                                                    error=True))
+            else:
+                if len(app.args) == 1:
+                    reason = "No reason found."
+                else:
+                    reason = ' '.join(app.args[1:])
+                x = True
+                while x:
+                    charset = "0123456789"
+                    strike_id_length = 10
+                    strike_id = ""
+                    while not len(strike_id) == strike_id_length:
+                        strike_id = strike_id + charset[random.randint(0, len(charset)-1)]
+                        if (await app.run_mysql("SELECT COUNT(*) AS COUNT FROM strikes WHERE strike_id = %s", (strike_id,), get_one=True))[0] == 0:
+                            x = False
+                await app.run_mysql("INSERT INTO strikes(strike_id, staff_id, user_id, server_id, strike_reason) VALUES (%s, %s, %s, %s, %s)",
+                (strike_id, app.message.author.id, user.id, app.message.guild.id, reason, ), commit=True)
+                strike_count = (await app.run_mysql("SELECT COUNT(*) AS COUNT FROM strikes WHERE user_id = %s AND server_id = %s", (user.id, app.message.guild.id, ), get_one=True))[0]
+                try:
+                    await user.send(f"You were stricken in `{app.message.guild.name}` by `{app.message.author.name} ({app.message.author.id})` for `{reason}`.")
+                except:
+                    pass
+                embed = app.create_embed("User stricken:",
+                                        f"`{user.name} ({user.id})` was stricken by {app.message.author.mention} for `{reason}`. They now have {strike_count} strike(s).",
+                                        success=True)
+                await app.say(embed=embed)
+                await app.attempt_log(app.message.guild.id, embed=embed)
+    # Allows you to strike a user.

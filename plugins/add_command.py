@@ -1,52 +1,35 @@
-import discord
-# Imports go here.
+# Cube. Copyright (C) Jake Gealer <jake@gealer.email> 2017-2018.
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-async def add_command(app):
-    if app.args == []:
-        embed=discord.Embed(title="I could not find any arguments.", 
-            description="Please supply the command first and then the response. For instance using the default prefix as an example, `{}add_command command description`.".format(app.config["default_prefix"]),
-            color=0xff0000)
-        embed.set_footer(text=app.premade_ver)
-        await app.say(embed=embed)
-    else:
-        if len(app.args) == 1:
-            embed=discord.Embed(title="I could not find a response.", 
-                description="Please provide one for the second arguement.",
-                color=0xff0000)
-            embed.set_footer(text=app.premade_ver)
-            await app.say(embed=embed)
+def Plugin(app):
+
+    @app.command("Allows you to create a custom command.", requires_management=True, usage="[command] [response]")
+    async def add_command(app):
+        if app.args == []:
+            await app.say(embed=app.create_embed("Could not find arguments.",
+                                "Please provide arguments for this command.",
+                                                                error=True))
         else:
-            command = app.args[0].lower()
-            del app.args[0]
-            cmd_count_sql = "SELECT COUNT(*) AS COUNT FROM custom_commands WHERE server_id = %s AND command = %s"
-            with app.mysql_connection.cursor() as cursor:
-                cursor.execute(cmd_count_sql, (app.message.server.id, command, ))
-                cmd_count = cursor.fetchone()["COUNT"]
-                cursor.close()
-            if cmd_count != 0:
-                embed=discord.Embed(title="Command already exists.", 
-                                    description="`{}` already exists. Please delete it if you want to recreate it.".format(command),
-                                    color=0xff0000)
-                embed.set_footer(text=app.premade_ver)
-                await app.say(embed=embed)
+            if len(app.args) == 1:
+                await app.say(embed=app.create_embed("No response found.",
+                    "Please provide the response for the second argument.",
+                                                                error=True))
             else:
-                sql = "INSERT INTO custom_commands (server_id, command, response) VALUES (%s, %s, %s)"
-                with app.mysql_connection.cursor() as cursor:
-                    cursor.execute(sql, (app.message.server.id, command, ' '.join(app.args)))
-                    cursor.close()
-                app.mysql_connection.commit()
-                generic_desc = "`{}` was set as a custom command".format(command)
-                embed=discord.Embed(title="✓ Custom command added.", 
-                                    description="{}.".format(generic_desc),
-                                    color=0x00ff00)
-                embed.set_footer(text=app.premade_ver)
-                await app.say(embed=embed)
-                embed=discord.Embed(title="Custom command added.", description="{} by `{}`.".format(generic_desc, app.message.author.name))
-                await app.attempt_log(app.message.server.id, embed)
-# Allows you to set a custom command.
-
-add_command.description = "Allows you to set a custom command. Use $args$ to represent any arguements for the command."
-# Sets a description for "add_command".
-
-add_command.requires_staff = True
-# Set that this script requires staff.
+                command = app.args[0]
+                response = ' '.join(app.args[1:])
+                cmd_count = (await app.run_mysql("SELECT COUNT(*) AS COUNT FROM custom_commands WHERE server_id = %s AND command = %s",
+                            (app.message.guild.id, command, ), get_one=True))[0]
+                if cmd_count != 0:
+                    await app.say(embed=app.create_embed("Command already exists.",
+                                f"`{command}` already exists. Please delete it if you want to recreate it.",
+                                error=True))
+                else:
+                    await app.run_mysql("INSERT INTO custom_commands (server_id, command, response) VALUES (%s, %s, %s)",
+                                                                (app.message.guild.id, command, response, ), commit=True)
+                    embed = app.create_embed("Custom command added:",
+                    f"`{command}` was added as a custom command by {app.message.author.mention}.", success=True)
+                    await app.say(embed=embed)
+                    await app.attempt_log(app.message.guild.id, embed=embed)
+    # Allows you to create a custom command.

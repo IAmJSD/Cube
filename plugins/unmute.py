@@ -1,62 +1,43 @@
-import discord
+# Cube. Copyright (C) Jake Gealer <jake@gealer.email> 2017-2018.
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+import asyncio
 # Imports go here.
 
-async def unmute(app):
-    if app.args == []:
-        embed=discord.Embed(title="No user found.", description="Please provide the user to unmute.", color=0xff0000)
-        embed.set_footer(text=app.premade_ver)
-        await app.say(embed=embed)
-    else:
-        user = app.pass_user(app.args[0], app.message.server)
-        if user is None:
-            embed=discord.Embed(title="Rest in pepperonis.", description="I couldn't find that user. Please make sure you put the user as the first argument.", color=0xff0000)
-            embed.set_footer(text=app.premade_ver)
-            await app.say(embed=embed)
-        elif not "muted" in str([r.name for r in user.roles]).lower():
-            await app.say("User is not muted.")
+def Plugin(app):
+
+    @app.command('Allows you to unmute a user.', requires_staff=True, usage="[user]")
+    async def unmute(app):
+        if app.args == []:
+            await app.say(embed=app.create_embed("Could not find arguments.",
+                                "Please provide arguments for this command.",
+                                                                error=True))
         else:
-            y = False
-            for r in user.roles:
-                if "muted" in r.name.lower():
+            user = app.pass_user(app.message.guild, app.args[0])
+            if user is None:
+                await app.say(embed=app.create_embed("Could not find the user.",
+                            "Make sure you tag the user as your first argument.",
+                                                                    error=True))
+            else:
+                if not "muted" in str([r.name.lower() for r in user.roles]):
+                    await app.say("User not muted.")
+                else:
+                    m = None
+                    for r in user.roles:
+                        if m is None and "muted" in r.name.lower():
+                            m = r
                     try:
-                        await app.dclient.remove_roles(user, r)
-                        y = True
+                        await user.remove_roles(m, reason="UNMUTE")
+                    except:
+                        await app.say("Could not remove the Muted role.")
+                        return
+                    try:
+                        await user.send(f"You were unmuted in `{app.message.guild.name}` by `{app.message.author.name} ({app.message.author.id})`.")
                     except:
                         pass
-            member_name_count_sql = "SELECT COUNT(*) AS COUNT FROM member_roles WHERE server_id = %s"
-            with app.mysql_connection.cursor() as cursor:
-                cursor.execute(member_name_count_sql, (app.message.server.id, ))
-                member_name_count = cursor.fetchone()["COUNT"]
-                cursor.close()
-            if member_name_count != 0:
-                get_role = "SELECT * FROM member_roles WHERE server_id = %s"
-                with app.mysql_connection.cursor() as cursor:
-                    cursor.execute(get_role, (app.message.server.id, ))
-                    role_part = cursor.fetchone()["part_of_role"]
-                    cursor.close()
-                x = False
-                for role in app.message.server.roles:
-                    if not x:
-                        if role_part in role.name.lower():
-                            try:
-                                await app.dclient.add_roles(user, role)
-                                x = True
-                            except:
-                                pass
-                if y:
-                    generic_desc = "`{}` has been unmuted".format(user.name)
-                    embed=discord.Embed(title="User unmuted:", description="{}.".format(generic_desc), color=0x00ff00)
-                    embed.set_footer(text=app.premade_ver)
+                    embed = app.create_embed("User unmuted:", f"`{user.name} ({user.id})` was unmuted by {app.message.author.mention}.", success=True)
                     await app.say(embed=embed)
-                    log_embed=discord.Embed(title="User unmuted:", description="{} by `{}`.".format(generic_desc, app.message.author.name))
-                    log_embed.set_footer(text=app.premade_ver)
-                    await app.attempt_log(app.message.server.id, log_embed)
-                else:
-                    await app.say("Could not unmute the user.")
-# Allows you to unmute a member.
-
-unmute.description = "Allows you to unmute a member."
-# Sets a description for "unmute".
-
-unmute.requires_staff = True
-# Set that this script requires staff.
+                    await app.attempt_log(app.message.guild.id, embed=embed)
+    # Allows you to unmute a user.

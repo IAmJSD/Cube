@@ -1,36 +1,31 @@
-import discord
+# Cube. Copyright (C) Jake Gealer <jake@gealer.email> 2017-2018.
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+import asyncio
 # Imports go here.
 
-async def toggle_agree(app):
-    member_name_count_sql = "SELECT COUNT(*) AS COUNT FROM member_roles WHERE server_id = %s"
-    with app.mysql_connection.cursor() as cursor:
-        cursor.execute(member_name_count_sql, (app.message.server.id, ))
-        member_name_count = cursor.fetchone()["COUNT"]
-        cursor.close()
-    if member_name_count == 0:
-        await app.say("Please say something that is in the name of the Member role **but not in any other role**. This is not case sensitive.")
-        msg2 = await app.dclient.wait_for_message(author=app.message.author, timeout=30)
-        if not msg2 is None:
-            role = msg2.content.lower()
-            member_name_insert_sql = "INSERT INTO member_roles (part_of_role, server_id) VALUES(%s, %s)"
-            with app.mysql_connection.cursor() as cursor:
-                cursor.execute(member_name_insert_sql, (role, app.message.server.id, ))
-                cursor.close()
-            await app.say("Alright! The agree command is active now.")
-            log_embed = discord.Embed(title="Agree setup:", description="The agree command was setup by `{}` to give a role where part of the role name was `{}`.".format(app.message.author.name, role))
-            await app.attempt_log(app.message.server.id, log_embed)
-    else:
-            disable_agree_sql = "DELETE FROM member_roles WHERE server_id = %s"
-            with app.mysql_connection.cursor() as cursor:
-                cursor.execute(disable_agree_sql, (app.message.server.id, ))
-                cursor.close()
-            await app.say("The agree command was disabled.")
-            log_embed = discord.Embed(title="Agree disabled:", description="The agree command was disabled by `{}`.".format(app.message.author.name))
-            await app.attempt_log(app.message.server.id, log_embed)
-# Allows the "agree" command to be turned on and off.
+def Plugin(app):
 
-toggle_agree.description = 'Allows the "agree" command to be turned on and off.'
-# Sets a description for "toggle_agree".
-
-toggle_agree.requires_staff = True
-# Set that this script requires staff.
+    @app.command('Allows the "agree" command to be turned on and off. If you want to reconfigure "agree", simply run it twice.', requires_management=True)
+    async def toggle_agree(app):
+        is_agree_active = not (await app.run_mysql("SELECT COUNT(*) AS COUNT FROM member_roles WHERE server_id = %s", (app.message.guild.id, ), get_one=True))[0] == 0
+        if is_agree_active:
+            await app.run_mysql("DELETE FROM member_roles WHERE server_id = %s", (app.message.guild.id, ), commit=True)
+            embed = app.create_embed("Agree disabled:", f"The agree function was disabled by {app.message.author.mention}.", error=True)
+            await app.say(embed=embed)
+            await app.attempt_log(app.message.guild.id, embed=embed)
+        else:
+            await app.say("Please say something that is in the name of the Member role **but not in any other role**. This is not case sensitive.")
+            def check(m):
+                return m.author == app.message.author and m.channel == app.message.channel
+            try:
+                msg2 = await app.dclient.wait_for('message', check=check, timeout=30)
+            except asyncio.TimeoutError:
+                return
+            await app.run_mysql("INSERT INTO member_roles (server_id, role_part) VALUES(%s, %s)", (app.message.guild.id, msg2.content, ), commit=True)
+            embed = app.create_embed("Agree enabled:", f"The agree function was enabled by {app.message.author.mention} to apply a role which contains `{msg2.content}`.", success=True)
+            await app.say(embed=embed)
+            await app.attempt_log(app.message.guild.id, embed=embed)
+    # Allows the "agree" command to be turned on and off. If you want to reconfigure "agree", simply run it twice.

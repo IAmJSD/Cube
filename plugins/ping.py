@@ -1,14 +1,17 @@
+# Cube. Copyright (C) Jake Gealer <jake@gealer.email> 2017-2018.
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
 import discord, time
 # Imports go here.
 
-async def ping(app):
-    before = time.perf_counter()
-    msg = await app.say(embed=discord.Embed(title="Pinging..."))
-    total = ((time.perf_counter()-before)*1000)
-    embed=discord.Embed(title="🏓 Pong!", description="Generating a message took {} ms.".format(round(total, 1)), color=0x00ff00)
-    embed.set_footer(text=app.premade_ver)
-    await app.dclient.edit_message(msg, embed=embed)
-# Pings the bot.
+def Plugin(app):
 
-ping.description = "Pings the bot."
-# Sets a description for "ping".
+    @app.command("Pings the bot.")
+    async def ping(app):
+        before = time.perf_counter()
+        msg = await app.say(embed=discord.Embed(title="Pinging..."))
+        total = (time.perf_counter()-before)*1000
+        await msg.edit(embed=app.create_embed("🏓 Pong!", "Generating a message took {} ms.".format(round(total, 1)), success=True))
+    # Pings the bot.

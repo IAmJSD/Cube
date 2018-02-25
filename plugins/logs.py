@@ -1,58 +1,55 @@
+# Cube. Copyright (C) Jake Gealer <jake@gealer.email> 2017-2018.
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
 import discord, os
 # Imports go here.
 
-async def on_message(app):
-    msg = app.message
-    if not msg.channel.is_private:
-        sql = "INSERT INTO `msg_logs` (`message_id`, `user_id`, `server_id`, `channel_id`, `attachments`, `content`) VALUES (%s, %s, %s, %s, %s, %s)"
-        with app.mysql_connection.cursor() as cursor:
-            cursor.execute(sql, (msg.id, msg.author.id, msg.server.id, msg.channel.id, str(msg.attachments), msg.content, ))
-            cursor.close()
-        app.mysql_connection.commit()
-# Logs every message sent.
+def Plugin(app):
 
-async def logs(app):
-    if app.args == []:
-        user = app.message.author
-    else:
-        user = app.pass_user(app.args[0], app.message.server)
-    if user == None:
-        embed=discord.Embed(title="Huston, we have a problem.",
-            description="I couldn't find that user.",
-            color=0xff0000)
-        embed.set_footer(text=app.premade_ver)
-        await app.say(embed=embed)
-    else:
-        line = "-----------"
-        log = line+"\nMessage logs for {} ({})\n".format(user.name, user.id)+line
-        sql = "SELECT * FROM msg_logs WHERE user_id = %s AND server_id = %s"
-        with app.mysql_connection.cursor() as cursor:
-            cursor.execute(sql, (user.id, app.message.server.id, ))
-            msgs=cursor.fetchall()
-            for msg in msgs:
-                channel = app.pass_channel(msg["channel_id"])
-                if channel == None:
-                    channel_layout = "{}".format(msg["channel_id"])
-                else:
-                    channel_layout = "{} ({})".format(channel.name, msg["channel_id"])
-                log=log+"\nMessage ID: {}\nChannel: {}\nAttachments: {}\nMessage Content: {}\n{}".format(msg["message_id"], channel_layout, msg["attachments"], msg["content"], line)
-            cursor.close()
-        with open(user.id+".txt", "w+", encoding="utf8") as logfile:
-            logfile.write(log)
-        try:
-            x = True
-            await app.dclient.send_file(app.message.author, user.id+".txt")
-        except:
-            x = False
-        os.remove(user.id+".txt")
-        if x:
-            await app.say(embed=discord.Embed(title="📬 Check DM's"))
+    @app.event
+    async def on_message(app):
+        await app.run_mysql("INSERT INTO `msg_logs` (`message_id`, `user_id`, `server_id`, `channel_id`, `attachments`, `content`) VALUES (%s, %s, %s, %s, %s, %s)",
+        (app.message.id, app.message.author.id, app.message.guild.id, app.message.channel.id, str(app.message.attachments), app.message.content, ), commit=True)
+    # Logs each message.
+
+    @app.command("Allows you to get logs about a user.", requires_staff=True, usage="[user]")
+    async def logs(app):
+        if app.args == []:
+            user = app.message.author
         else:
-            await app.say(embed=discord.Embed(title="Could not DM.", color=0xff0000))
-# Allows you to check logs of a user.
+            user = app.pass_user(app.message.guild, app.args[0])
+        if user is None:
+            await app.say(embed=app.create_embed("Could not find the user.",
+                        "Make sure you tag the user as your first argument.",
+                                                                error=True))
+        else:
+            line = "-----------"
+            log = line+"\nMessage logs for {} ({})\n".format(user.name, user.id)+line
+            msgs = await app.run_mysql("SELECT * FROM msg_logs WHERE user_id = %s AND server_id = %s",
+                                                    (user.id, app.message.guild.id, ), get_many=True)
+            for msg in msgs:
+                channel = app.pass_channel(msg[3])
+                if channel is None:
+                    channel_layout = "{}".format(msg[3])
+                else:
+                    channel_layout = "{} ({})".format(channel.name, msg[3])
+                log=log+"\nMessage ID: {}\nChannel: {}\nAttachments: {}\nMessage Content: {}\n{}".format(msg[0], channel_layout, msg[4], msg[5], line)
 
-logs.description = "Allows you to check logs of a user."
-# Sets a description for "logs".
+            with open(f"{user.id}.txt", "w+", encoding="utf8") as logfile:
+                logfile.write(log)
 
-logs.requires_staff = True
-# Set that this script requires staff.
+            try:
+                x = True
+                await app.whisper(file=discord.File(fp=f"{user.id}.txt"))
+            except:
+                x = False
+
+            os.remove(f"{user.id}.txt")
+
+            if x:
+                await app.say(embed=discord.Embed(title="📬 Check DM's"))
+            else:
+                await app.say(embed=discord.Embed(title="Could not DM.", color=0xff0000))
+    # Allows you to get logs about a user.
