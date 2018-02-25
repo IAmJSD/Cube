@@ -42,7 +42,7 @@ def Plugin(app):
                 except:
                     pass
                 embed = app.create_embed("User merited:",
-                                        f"`{user.name} ({user.id})` was merited by {app.message.author.mention} for `{reason}`. They now have {merit_count} merit(s).",
+                                        f"`{user.name} ({user.id})` was merited by {app.message.author.mention} for `{reason}`. They now have {merit_count+1} merit(s).",
                                         success=True)
                 await app.say(embed=embed)
                 await app.attempt_log(app.message.guild.id, embed=embed)
