@@ -133,7 +133,7 @@ def load_dclient(app):
 
     @app.dclient.event
     async def on_guild_join(server):
-        if await server_restriction_handler(app, server):
+        if await server_restriction_handler(server):
             return
         if "on_guild_join" in app.discord_callbacks:
             for i in app.discord_callbacks["on_guild_join"]:
