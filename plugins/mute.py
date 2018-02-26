@@ -30,7 +30,7 @@ def Plugin(app):
                     return m.author == app.message.author and m.channel == app.message.channel
                 try:
                     msg2 = await app.dclient.wait_for('message', check=check, timeout=30)
-                    if msg2.content.strip(' ').lower() == "yes":
+                    if msg2.content.strip(' ').lower() == "aye":
                         if "muted" in str([r.name.lower() for r in user.roles]):
                             await app.say("User already muted.")
                         else:
