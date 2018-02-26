@@ -1,3 +1,4 @@
+
 CREATE TABLE IF NOT EXISTS `bans` (
   `server_id` bigint(20) NOT NULL,
   `staff_id` bigint(20) NOT NULL,
@@ -67,6 +68,12 @@ CREATE TABLE IF NOT EXISTS `msg_logs` (
   `channel_id` bigint(20) NOT NULL,
   `attachments` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `content` text COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `muted_roles_backup` (
+  `roles_json` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `server_id` bigint(20) NOT NULL,
+  `user_id` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `silenced_servers` (
