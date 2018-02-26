@@ -34,6 +34,9 @@ def Plugin(app):
                         if "muted" in str([r.name.lower() for r in user.roles]):
                             await app.say("User already muted.")
                         else:
+                            roles_backup_json =  str({"roles" : [r.id for r in user.roles if r.name != "@everyone"]}).replace("'", '"')
+                            await app.run_mysql("INSERT INTO muted_roles_backup(roles_json, server_id, user_id) VALUES(%s, %s, %s)",
+                                                    (roles_backup_json, app.message.guild.id, user.id, ), commit=True)
                             try:
                                 roles_without_everyone = [r for r in user.roles if r.name != "@everyone"]
                                 await user.remove_roles(*roles_without_everyone, reason=f"MUTE: {reason}")

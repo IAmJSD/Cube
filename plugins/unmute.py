@@ -3,7 +3,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import asyncio
+import asyncio, json, discord
 # Imports go here.
 
 def Plugin(app):
@@ -33,6 +33,19 @@ def Plugin(app):
                     except:
                         await app.say("Could not remove the Muted role.")
                         return
+                    try:
+                        roles_json = json.loads(
+                            (await app.run_mysql("SELECT * FROM muted_roles_backup WHERE user_id = %s AND server_id = %s", (user.id, app.message.guild.id, ), get_one=True))[0]
+                        )
+                        for r in roles_json["roles"]:
+                            try:
+                                r_pass = discord.utils.get(app.message.guild.roles, id=r)
+                                await user.add_roles(r_pass, reason="UNMUTE")
+                            except:
+                                pass
+                        await app.run_mysql("DELETE FROM muted_roles_backup WHERE user_id = %s AND server_id = %s", (user.id, app.message.guild.id, ), commit=True)
+                    except:
+                        pass
                     try:
                         await user.send(f"You were unmuted in `{app.message.guild.name}` by `{app.message.author.name} ({app.message.author.id})`.")
                     except:
