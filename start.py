@@ -5,7 +5,7 @@
 
 from internal.dclient import load_dclient
 from pluginbase import PluginBase
-import discord, logging, inspect, json, os, aiomysql, re
+import asyncio, discord, logging, inspect, json, os, aiomysql, re
 # Imports go here.
 
 print(r"""
@@ -20,20 +20,23 @@ This bot is based on the Cube core created by JakeMakesStuff on GitHub and licen
 # ASCII!!!!!!11111111111111!
 
 try:
-    import asyncio, uvloop, concurrent.futures
+    import uvloop, concurrent.futures
     asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
     loop = asyncio.get_event_loop()
     pool = concurrent.futures.ThreadPoolExecutor()
     loop.set_default_executor(pool)
     using_uvloop = True
 except:
+    loop = asyncio.get_event_loop()
     using_uvloop = False
 # Uses uvloop if it is installed.
 
 class Application:
 
-    def __init__(self, using_uvloop): self.using_uvloop = using_uvloop
-    # Sets whether the bot is using uvloop.
+    def __init__(self, using_uvloop, loop):
+        self.using_uvloop = using_uvloop
+        self.loop = loop
+    # Sets the loop info.
 
     def pass_user(self, server, user_string):
         try:
@@ -133,7 +136,7 @@ class Application:
     plugins = dict()
     # Defines the dictionarys.
 
-    dclient = discord.AutoShardedClient()
+    dclient = discord.AutoShardedClient(loop=loop)
     # Sets the Discord client.
 
     def command(self,
@@ -207,7 +210,7 @@ class Application:
         self.dclient.run(self.config["token"])
     # Function to start the bot.
 
-app = Application(using_uvloop)
+app = Application(using_uvloop, loop)
 # Defines the application.
 
 load_dclient(app)
