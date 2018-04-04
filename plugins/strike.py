@@ -42,7 +42,7 @@ def Plugin(app):
                 except:
                     pass
                 embed = app.create_embed("User stricken:",
-                                        f"`{user.name} ({user.id})` was stricken by {app.message.author.mention} for `{reason}`. They now have {strike_count+1} strike(s).",
+                                        f"`{user.name} ({user.id})` was stricken by {app.message.author.mention} for `{reason}`. They now have {strike_count} strike(s).",
                                         success=True)
                 await app.say(embed=embed)
                 await app.attempt_log(app.message.guild.id, embed=embed)
