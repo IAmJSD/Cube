@@ -18,7 +18,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build the bot and deploy it to Docker
-        run: docker build . -t docker.pkg.github.com/jakemakesstuff/cube/bot && docker push docker.pkg.github.com/jakemakesstuff/cube/bot && cd ..
+        run: docker build . -t docker.pkg.github.com/jakemakesstuff/cube/cube-bot && docker push docker.pkg.github.com/jakemakesstuff/cube/cube-bot && cd ..
 
       - name: Deploy changes to Kubernetes
         run: |

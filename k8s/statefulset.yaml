@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: jakegealer-me
-          image: docker.pkg.github.com/jakemakesstuff/cube/bot:latest
+          image: docker.pkg.github.com/jakemakesstuff/cube/cube-bot:latest
           imagePullPolicy: Always
           env:
             - name: TOKEN
