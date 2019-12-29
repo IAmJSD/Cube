@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: cube-bot
+spec:
+  replicas: 1
+  serviceName: cube-bot
+  selector:
+    matchLabels:
+      run: cube-bot
+  template:
+    metadata:
+      labels:
+        run: cube-bot
+    spec:
+      containers:
+        - name: jakegealer-me
+          image: docker.pkg.github.com/jakemakesstuff/cube/bot:latest
+          imagePullPolicy: Always
+          env:
+            - name: TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: cube
+                  key: discord_token
+            - name: REDIS_ADDR
+              valueFrom:
+                secretKeyRef:
+                  name: cube
+                  key: redis_addr
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cube
+                  key: redis_password
+            - name: DEFAULT_PREFIX
+              valueFrom:
+                secretKeyRef:
+                  name: cube
+                  key: default_prefix
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name

@@ -1,0 +1,30 @@
+name: Build and deploy to the Kubernetes cluster
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Login to Docker
+        run: docker login docker.pkg.github.com --username RepoOwner --password "${GITHUB_TOKEN}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build the bot and deploy it to Docker
+        run: docker build . -t docker.pkg.github.com/jakemakesstuff/cube/bot && docker push docker.pkg.github.com/jakemakesstuff/cube/bot && cd ..
+
+      - name: Deploy changes to Kubernetes
+        run: |
+          wget --header "Content-Type: application/json" --header "Authorization: Bearer $DIGITALOCEAN_TOKEN" "https://api.digitalocean.com/v2/kubernetes/clusters/36c00b74-a867-403d-9e45-77aa33402e59/kubeconfig"
+          kubectl --kubeconfig=./kubeconfig apply -f ./k8s/statefulset.yaml
+          kubectl --kubeconfig=./kubeconfig rollout restart statefulset/cube-bot
+          rm ./kubeconfig
+        env:
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}

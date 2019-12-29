@@ -1,0 +1,9 @@
+{
+  "$note": "Assuming you have contributed to the source base, feel free to add yourself here!",
+  "credits": [
+    {
+      "username": "JakeMakesStuff#0001",
+      "description": "Owner, hosts the main instance and wrote the initial codebase."
+    }
+  ]
+}
