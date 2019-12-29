@@ -1,12 +1,14 @@
 FROM golang:1.13-stretch AS backend-builder
-WORKDIR /var/cube
+WORKDIR /opt/cube
 COPY . .
 RUN go get
-RUN go build
+RUN CGO_ENABLED=0 GOOS=linux go build -o app
 
-FROM alpine AS final-build
+FROM alpine AS certs
 RUN apk add --no-cache ca-certificates
-WORKDIR /var/cube
-COPY --from=backend-builder /var/cube .
-RUN chmod 777 ./cube
-CMD ./cube
+
+FROM scratch
+WORKDIR /opt/cube
+COPY --from=certs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+COPY --from=backend-builder /opt/cube .
+CMD ["./app"]
