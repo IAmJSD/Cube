@@ -14,7 +14,7 @@ spec:
         run: cube-bot
     spec:
       containers:
-        - name: jakegealer-me
+        - name: cube
           image: docker.pkg.github.com/jakemakesstuff/cube/cube-bot:latest
           imagePullPolicy: Always
           env:
