@@ -8,4 +8,5 @@ FROM alpine AS final-build
 RUN apk add --no-cache ca-certificates
 WORKDIR /var/cube
 COPY --from=backend-builder /var/cube .
+RUN chmod 777 ./cube
 CMD ./cube
