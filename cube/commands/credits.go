@@ -36,8 +36,8 @@ func init() {
 
 func init() {
 	commandprocessor.Commands["credits"] = &commandprocessor.Command{
-		Description:      "Shows the credits for the bot.",
-		Category:          categories.INFORMATIONAL,
+		Description: "Shows the credits for the bot.",
+		Category:    categories.INFORMATIONAL,
 		Function: func(Args *commandprocessor.CommandArgs) {
 			messages.GenericText(
 				Args.Channel,

@@ -10,13 +10,13 @@ import (
 
 func init() {
 	commandprocessor.Commands["help"] = &commandprocessor.Command{
-		Description:      "Provides help for the bot.",
-		Category:          categories.INFORMATIONAL,
+		Description: "Provides help for the bot.",
+		Category:    categories.INFORMATIONAL,
 		Function: func(Args *commandprocessor.CommandArgs) {
 			// The struct for this function.
 			type TmpCommand struct {
 				Name string
-				Cmd *commandprocessor.Command
+				Cmd  *commandprocessor.Command
 			}
 
 			// Gets all of the categories.
@@ -33,7 +33,7 @@ func init() {
 					if !Exists {
 						Categories = append(Categories, v.Category)
 					}
-					CategoryMap[v.Category] = append(CategoryMap[v.Category], &TmpCommand{Name:name, Cmd:v})
+					CategoryMap[v.Category] = append(CategoryMap[v.Category], &TmpCommand{Name: name, Cmd: v})
 				}
 			}
 			CatStrings := make([]string, len(Categories))
@@ -58,8 +58,8 @@ func init() {
 				Commands := CategoryMap[v]
 				i := 0
 				Embed := &discordgo.MessageEmbed{
-					Title:v.Name + " Commands",
-					Description:v.Description,
+					Title:       v.Name + " Commands",
+					Description: v.Description,
 				}
 				for _, cmd := range Commands {
 					if cmd.Cmd.PermissionsCheck != nil {
@@ -71,8 +71,8 @@ func init() {
 					if i == 25 {
 						Embeds = append(Embeds, Embed)
 						Embed = &discordgo.MessageEmbed{
-							Title:v.Name,
-							Description:v.Description,
+							Title:       v.Name,
+							Description: v.Description,
 						}
 					}
 					i++
@@ -92,7 +92,7 @@ func init() {
 				return
 			}
 			for _, v := range Embeds {
-				_, err := Args.Session.ChannelMessageSendComplex(c.ID, &discordgo.MessageSend{Embed:v})
+				_, err := Args.Session.ChannelMessageSendComplex(c.ID, &discordgo.MessageSend{Embed: v})
 				if err != nil {
 					messages.Error(Args.Channel, "Failed to DM:", "Failed to DM you! Do you have DM's off or me blocked?", Args.Session)
 					return

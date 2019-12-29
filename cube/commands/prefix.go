@@ -13,7 +13,7 @@ func init() {
 		Description:      "This is used to set the prefix of the bot.",
 		Category:         categories.ADMINISTRATOR,
 		PermissionsCheck: permissions.ADMINISTRATOR,
-		Usage: "<new prefix>",
+		Usage:            "<new prefix>",
 		Function: func(Args *commandprocessor.CommandArgs) {
 			// Handles ensuring the prefix is correct.
 			Prefix := ""
@@ -31,11 +31,11 @@ func init() {
 					// Add to the prefix.
 					Prefix += string(v)
 				}
- 			}
+			}
 
- 			// Sets the prefix.
- 			redis.Client.Set("p:" + Args.Message.GuildID, Prefix, 0)
-			messages.GenericText(Args.Channel, "Prefix Set", "The prefix was successfully set to `" + Prefix + "`.", nil, Args.Session)
+			// Sets the prefix.
+			redis.Client.Set("p:"+Args.Message.GuildID, Prefix, 0)
+			messages.GenericText(Args.Channel, "Prefix Set", "The prefix was successfully set to `"+Prefix+"`.", nil, Args.Session)
 		},
 	}
 }

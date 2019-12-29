@@ -9,19 +9,19 @@ import (
 func GenericText(Channel *discordgo.Channel, Title string, Description string, Fields []*discordgo.MessageEmbedField, Session *discordgo.Session) {
 	_, _ = Session.ChannelMessageSendComplex(Channel.ID, &discordgo.MessageSend{
 		Content: "",
-		Embed:   &discordgo.MessageEmbed{
+		Embed: &discordgo.MessageEmbed{
 			Title:       Title,
 			Description: Description,
 			Color:       styles.Generic,
-			Author:      &discordgo.MessageEmbedAuthor{
-				URL:          "https://cubebot.xyz",
-				Name:         "Cube",
-				IconURL:      Session.State.User.AvatarURL(""),
+			Author: &discordgo.MessageEmbedAuthor{
+				URL:     "https://cubebot.xyz",
+				Name:    "Cube",
+				IconURL: Session.State.User.AvatarURL(""),
 			},
 			Fields: Fields,
 		},
-		Tts:     false,
-		Files:   nil,
-		File:    nil,
+		Tts:   false,
+		Files: nil,
+		File:  nil,
 	})
 }

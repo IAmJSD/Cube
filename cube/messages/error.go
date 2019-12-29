@@ -9,18 +9,18 @@ import (
 func Error(Channel *discordgo.Channel, Title string, ErrorMessage string, Session *discordgo.Session) {
 	_, _ = Session.ChannelMessageSendComplex(Channel.ID, &discordgo.MessageSend{
 		Content: "",
-		Embed:   &discordgo.MessageEmbed{
+		Embed: &discordgo.MessageEmbed{
 			Title:       Title,
 			Description: ErrorMessage,
 			Color:       styles.Error,
-			Author:      &discordgo.MessageEmbedAuthor{
-				URL:          "https://cubebot.xyz",
-				Name:         "Cube",
-				IconURL:      Session.State.User.AvatarURL(""),
+			Author: &discordgo.MessageEmbedAuthor{
+				URL:     "https://cubebot.xyz",
+				Name:    "Cube",
+				IconURL: Session.State.User.AvatarURL(""),
 			},
 		},
-		Tts:     false,
-		Files:   nil,
-		File:    nil,
+		Tts:   false,
+		Files: nil,
+		File:  nil,
 	})
 }

@@ -10,8 +10,8 @@ import (
 
 func init() {
 	commandprocessor.Commands["ping"] = &commandprocessor.Command{
-		Description:      "Pings the bot.",
-		Category:          categories.INFORMATIONAL,
+		Description: "Pings the bot.",
+		Category:    categories.INFORMATIONAL,
 		Function: func(Args *commandprocessor.CommandArgs) {
 			EndTime := time.Now()
 			NowSubThen := EndTime.Sub(*Args.StartTime)

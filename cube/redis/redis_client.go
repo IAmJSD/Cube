@@ -19,9 +19,9 @@ func init() {
 	}
 	Password := os.Getenv("REDIS_PASSWORD")
 	Client = redis.NewClient(&redis.Options{
-		Addr: Addr,
+		Addr:     Addr,
 		Password: Password,
-		DB: 0,
+		DB:       0,
 		TLSConfig: &tls.Config{
 			InsecureSkipVerify: true,
 		},

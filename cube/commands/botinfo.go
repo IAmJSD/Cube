@@ -10,8 +10,8 @@ import (
 
 func init() {
 	commandprocessor.Commands["botinfo"] = &commandprocessor.Command{
-		Description:      "Shows information about the bot.",
-		Category:          categories.INFORMATIONAL,
+		Description: "Shows information about the bot.",
+		Category:    categories.INFORMATIONAL,
 		Function: func(Args *commandprocessor.CommandArgs) {
 			messages.GenericText(
 				Args.Channel, "Cube Information:",

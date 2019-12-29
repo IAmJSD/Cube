@@ -1,5 +1,5 @@
 # Cube
-**A bot designed to run the more entertaining parts of your Discord server with very little configuration required.**
+**A bot designed to run the more entertaining parts of your Discord server with very little configuration required. You can invite the bot [here](https://discordapp.com/oauth2/authorize?client_id=660941659613298689&scope=bot&permissions=1211231296).**
 
 Cube is a bot which is designed to be able to be lightweight, stable and give the user a bot which can help entertain members. As of right now, the bot is in alpha stages meaning it is constantly being developed. The bot uses Redis for its database, allowing for fast access to information and, therefore, lightning fast response times (usually well under 1ms). We don't want users waiting after all, this bot is meant to be fun!
 

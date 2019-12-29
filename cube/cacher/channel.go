@@ -20,7 +20,7 @@ func GetChannel(ChannelID string, session *discordgo.Session) (*discordgo.Channe
 		if err != nil {
 			return nil, err
 		}
-		redis.Client.Set("c:" + ChannelID, j, 0)
+		redis.Client.Set("c:"+ChannelID, j, 0)
 		return c, nil
 	} else if err == nil {
 		// Returns from cache.

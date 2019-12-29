@@ -36,7 +36,7 @@ func init() {
 	e = os.Getenv("POD_NAME")
 	if e != "" {
 		DashSplit := strings.Split(e, "-")
-		Last := DashSplit[len(DashSplit) - 1]
+		Last := DashSplit[len(DashSplit)-1]
 		i, err := strconv.Atoi(Last)
 		if err != nil {
 			panic(err)
