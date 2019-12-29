@@ -42,3 +42,5 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+      imagePullSecrets:
+        - name: github
