@@ -22,7 +22,7 @@ jobs:
 
       - name: Deploy changes to Kubernetes
         run: |
-          wget --header "Content-Type: application/json" --header "Authorization: Bearer $DIGITALOCEAN_TOKEN" "https://api.digitalocean.com/v2/kubernetes/clusters/36c00b74-a867-403d-9e45-77aa33402e59/kubeconfig"
+          wget --header "Content-Type: application/json" --header "Authorization: Bearer $DIGITALOCEAN_TOKEN" "https://api.digitalocean.com/v2/kubernetes/clusters/dff53e64-adad-459b-9c4a-b7dd3e01a586/kubeconfig"
           kubectl --kubeconfig=./kubeconfig apply -f ./k8s/statefulset.yaml
           kubectl --kubeconfig=./kubeconfig rollout restart statefulset/cube-bot
           rm ./kubeconfig
