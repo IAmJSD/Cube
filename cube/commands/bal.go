@@ -10,7 +10,7 @@ import (
 )
 
 func init() {
-	commandprocessor.Commands["balance"] = &commandprocessor.Command{
+	commandprocessor.Commands["bal"] = &commandprocessor.Command{
 		Description:      "Gets your balance in this guild.",
 		Category:         categories.CURRENCY,
 		PermissionsCheck: currency.CurrencyEnabled,
