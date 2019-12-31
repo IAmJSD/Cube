@@ -3,7 +3,7 @@ package utils
 // Mention is the user mention specified.
 type Mention struct {
 	Len int
-	ID string
+	ID  string
 }
 
 // CheckMention is used to check if the bot was mentioned.
