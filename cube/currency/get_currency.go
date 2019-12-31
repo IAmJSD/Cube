@@ -8,7 +8,7 @@ import (
 // GetCurrency is used to get the currency from Redis.
 func GetCurrency(GuildID string) *Currency {
 	c, err := redis.Client.Get("C:" + GuildID).Bytes()
-	if err != nil {
+	if err == nil {
 		var obj Currency
 		_ = json.Unmarshal(c, &obj)
 		return &obj
