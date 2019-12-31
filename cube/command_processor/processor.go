@@ -82,6 +82,7 @@ func Processor(Message *discordgo.Message, Channel *discordgo.Channel, Session *
 		Session:   Session,
 		StartTime: StartTime,
 		Prefix:    Message.Content[:PrefixLen],
+		Shared:    &map[string]interface{}{},
 	}
 
 	// Do the permissions check specified.

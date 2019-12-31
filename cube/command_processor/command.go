@@ -14,6 +14,7 @@ type CommandArgs struct {
 	Channel   *discordgo.Channel
 	Session   *discordgo.Session
 	StartTime *time.Time
+	Shared    *map[string]interface{}
 }
 
 // Command is the structure which all commands will follow.

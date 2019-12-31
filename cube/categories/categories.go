@@ -11,3 +11,9 @@ var INFORMATIONAL = &Category{
 	Name:        "Informational",
 	Description: "Informational commands are commands which give information about the bot.",
 }
+
+// CURRENCY commands are commands which handle a guilds currency.
+var CURRENCY = &Category{
+	Name:        "Currency",
+	Description: "Currency commands are commands which handle a guilds currency.",
+}
