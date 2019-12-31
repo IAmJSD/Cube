@@ -8,6 +8,10 @@ func CurrencyEnabled(Args *commandprocessor.CommandArgs) (bool, string) {
 	if !Currency.Enabled {
 		return false, "This servers currency is currently disabled."
 	}
+	if Currency.Emoji == nil {
+		Emoji := "💵"
+		Currency.Emoji = &Emoji
+	}
 	(*Args.Shared)["currency"] = Currency
 	return true, ""
 }

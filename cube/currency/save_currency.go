@@ -11,5 +11,5 @@ func SaveCurrency(GuildID string, c *Currency) {
 	if err != nil {
 		return
 	}
-	redis.Client.Set("C:" + GuildID, j, 0)
+	redis.Client.Set("C:"+GuildID, j, 0)
 }

@@ -17,10 +17,6 @@ func init() {
 		Function: func(Args *commandprocessor.CommandArgs) {
 			cur := (*Args.Shared)["currency"].(*currency.Currency)
 			bal := wallets.GetBalance(Args.Message.Author.ID, Args.Message.GuildID)
-			if cur.Emoji == nil {
-				Emoji := "💵"
-				cur.Emoji = &Emoji
-			}
 			messages.GenericText(Args.Channel, "Balance:", fmt.Sprintf("You have %v %s in your wallet!",
 				bal, *cur.Emoji), nil, Args.Session)
 		},

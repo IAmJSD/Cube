@@ -35,7 +35,7 @@ func Processor(Message *discordgo.Message, Channel *discordgo.Channel, Session *
 		PrefixLen = len(Prefix)
 	} else {
 		// Check if the bot was mentioned. If not, return.
-		PrefixLen = utils.CheckMention(Message.Content, Session)
+		PrefixLen = utils.CheckMention(Message.Content, &Session.State.User.ID).Len
 		if PrefixLen == 0 {
 			return
 		}

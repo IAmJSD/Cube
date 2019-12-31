@@ -1,17 +1,20 @@
 package utils
 
-import "github.com/bwmarrin/discordgo"
+// Mention is the user mention specified.
+type Mention struct {
+	Len int
+	ID string
+}
 
 // CheckMention is used to check if the bot was mentioned.
-func CheckMention(Content string, session *discordgo.Session) int {
-	// Get the bot ID.
-	BotID := session.State.User.ID
-
+func CheckMention(Content string, OtherID *string) *Mention {
 	// Check the length.
-	if len(BotID) > len(Content) {
-		// The length of the bot ID is greater than the content.
-		// It can't be a mention!
-		return 0
+	if OtherID != nil {
+		if len(*OtherID) > len(Content) {
+			// The length of the bot ID is greater than the content.
+			// It can't be a mention!
+			return &Mention{}
+		}
 	}
 
 	// Check the chars.
@@ -25,7 +28,7 @@ func CheckMention(Content string, session *discordgo.Session) int {
 		} else if i == 2 {
 			if BeginningChars != "<@" {
 				// Invalid ID.
-				return 0
+				return &Mention{}
 			} else {
 				// Check if this is a special char or part of the ID.
 				switch v {
@@ -35,7 +38,7 @@ func CheckMention(Content string, session *discordgo.Session) int {
 					break
 				case '&':
 					// Role.
-					return 0
+					return &Mention{}
 				default:
 					// Add to the ID.
 					ID += string(v)
@@ -55,6 +58,16 @@ func CheckMention(Content string, session *discordgo.Session) int {
 		}
 	}
 
+	// Check the ID (if specified).
+	if OtherID != nil {
+		if ID != *OtherID {
+			return &Mention{}
+		}
+	}
+
 	// Return the length.
-	return len(ID) + ExtraStuffLen
+	return &Mention{
+		Len: len(ID) + ExtraStuffLen,
+		ID:  ID,
+	}
 }
