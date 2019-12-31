@@ -1,9 +1,11 @@
 package commands
 
 import (
+	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"github.com/jakemakesstuff/Cube/cube/categories"
 	"github.com/jakemakesstuff/Cube/cube/command_processor"
+	guildscount "github.com/jakemakesstuff/Cube/cube/guilds_count"
 	"github.com/jakemakesstuff/Cube/cube/messages"
 	"github.com/jakemakesstuff/Cube/cube/utils"
 )
@@ -35,6 +37,11 @@ func init() {
 					{
 						Name:   "Website:",
 						Value:  "[https://cubebot.xyz](https://cubebot.xyz)",
+						Inline: true,
+					},
+					{
+						Name:   "Guilds",
+						Value:  fmt.Sprintf("%v", guildscount.Count()),
 						Inline: true,
 					},
 				}, Args.Session,

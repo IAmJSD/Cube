@@ -3,6 +3,7 @@ package events
 import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/jakemakesstuff/Cube/cube/cacher"
+	"github.com/jakemakesstuff/Cube/cube/guilds_count"
 	"github.com/jakemakesstuff/Cube/cube/redis"
 )
 
@@ -15,6 +16,9 @@ func init() {
 			Channels[i] = v.ID
 		}
 		go cacher.DeleteChannels(Channels...)
+
+		// Removes the guild from the count.
+		go guildscount.Remove(event.ID)
 
 		// Delete the prefix.
 		go redis.Client.Del("p:" + event.ID)
