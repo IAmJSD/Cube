@@ -42,7 +42,7 @@ func init() {
 
 			// Send a confirmation.
 			messages.GenericText(Args.Channel,
-				"Balance set:", user.Mention()+"'s balance has been set to "+strconv.Itoa(bal)+*cur.Emoji, nil, Args.Session)
+				"Balance set:", user.Mention()+"'s balance has been set to "+strconv.Itoa(bal)+" "+*cur.Emoji, nil, Args.Session)
 		},
 	}
 }
