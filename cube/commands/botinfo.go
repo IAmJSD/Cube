@@ -40,7 +40,7 @@ func init() {
 						Inline: true,
 					},
 					{
-						Name:   "Guilds",
+						Name:   "Guilds:",
 						Value:  fmt.Sprintf("%v", guildscount.Count()),
 						Inline: true,
 					},
