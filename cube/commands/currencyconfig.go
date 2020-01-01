@@ -39,9 +39,9 @@ func CreateCurrencyMenu(MenuID string, GuildID string, msg *discordgo.Message, c
 			Description: "Toggles the currency in this guild.",
 		},
 		Function: func(ChannelID string, MessageID string, menu *embedmenus.EmbedMenu, client *discordgo.Session) {
+			cur.Enabled = !cur.Enabled
 			_ = client.MessageReactionsRemoveAll(ChannelID, MessageID)
 			defer CreateCurrencyMenu(MenuID, GuildID, msg, cur).Display(ChannelID, MessageID, client)
-			cur.Enabled = !cur.Enabled
 			currency.SaveCurrency(GuildID, cur)
 		},
 	})
