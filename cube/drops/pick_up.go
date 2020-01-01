@@ -38,7 +38,7 @@ func PickUp(ID string, ChannelID string, MessageID string, GuildID string, UserI
 	msg, err := Session.ChannelMessageSendComplex(ChannelID, &discordgo.MessageSend{
 		Content: UserMention + " picked up " + strconv.Itoa(drop.amount) + " " + *Currency.Emoji + "!",
 	})
-	if err != nil {
+	if err == nil {
 		go func() {
 			time.Sleep(time.Second * 5)
 			_ = Session.ChannelMessageDelete(msg.ChannelID, msg.ID)
