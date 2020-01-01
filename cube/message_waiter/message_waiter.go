@@ -67,10 +67,13 @@ func WaitForMessage(ChannelID string, UserID string, Timeout int) *discordgo.Mes
 // MessageWaitHandler is used to handle incoming messages.
 func MessageWaitHandler(msg *discordgo.Message) {
 	waitersLock.RLock()
-	for _, v := range waiters {
+	for i, v := range waiters {
 		if v.UserID == msg.Author.ID && v.ChannelID == msg.ChannelID {
 			v.Result(msg)
 			waitersLock.RUnlock()
+			waitersLock.Lock()
+			waiters = append(waiters[:i], waiters[i+1:]...)
+			waitersLock.Unlock()
 			return
 		}
 	}

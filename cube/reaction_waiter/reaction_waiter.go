@@ -67,10 +67,13 @@ func WaitForReaction(MessageID string, UserID string, Timeout int) *discordgo.Em
 // ReactionWaitHandler is used to handle incoming reactions.
 func ReactionWaitHandler(r *discordgo.MessageReactionAdd) {
 	waitersLock.RLock()
-	for _, v := range waiters {
+	for i, v := range waiters {
 		if v.UserID == r.UserID && v.MessageID == r.MessageID {
 			v.Result(&r.Emoji)
 			waitersLock.RUnlock()
+			waitersLock.Lock()
+			waiters = append(waiters[:i], waiters[i+1:]...)
+			waitersLock.Unlock()
 			return
 		}
 	}
