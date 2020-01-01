@@ -4,6 +4,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/jakemakesstuff/Cube/cube/cacher"
 	"github.com/jakemakesstuff/Cube/cube/command_processor"
+	"github.com/jakemakesstuff/Cube/cube/drops"
 	"github.com/jakemakesstuff/Cube/cube/message_waiter"
 	"time"
 )
@@ -13,6 +14,9 @@ func init() {
 	Events = append(Events, func(s *discordgo.Session, m *discordgo.MessageCreate) {
 		// Handle message waiters.
 		go messagewaiter.MessageWaitHandler(m.Message)
+
+		// Handle random drops.
+		go drops.HandleRandomDrops(m.Message, s)
 
 		go func() {
 			// Gets the start time.

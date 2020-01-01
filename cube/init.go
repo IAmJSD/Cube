@@ -5,9 +5,11 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/jakemakesstuff/Cube/cube/events"
 	"github.com/jakemakesstuff/Cube/cube/sharding"
+	"math/rand"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	// Used to initialise Redis.
 	_ "github.com/jakemakesstuff/Cube/cube/redis"
@@ -18,6 +20,9 @@ import (
 
 // Init is used to initialise the application.
 func Init() {
+	// Set the random number seed.
+	rand.Seed(time.Now().UnixNano())
+
 	// Creates the Discord session.
 	session, err := discordgo.New("Bot " + Token)
 	if err != nil {
