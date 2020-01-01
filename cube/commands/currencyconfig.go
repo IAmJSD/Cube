@@ -7,9 +7,10 @@ import (
 	"github.com/jakemakesstuff/Cube/cube/command_processor"
 	"github.com/jakemakesstuff/Cube/cube/currency"
 	"github.com/jakemakesstuff/Cube/cube/embed_menus"
+	"github.com/jakemakesstuff/Cube/cube/message_waiter"
 	"github.com/jakemakesstuff/Cube/cube/permissions"
+	"github.com/jakemakesstuff/Cube/cube/reaction_waiter"
 	"github.com/jakemakesstuff/Cube/cube/styles"
-	messagewaiter "github.com/jakemakesstuff/Cube/cube/wait_for_message"
 	"github.com/jakemakesstuff/Cube/cube/wallets"
 	"strings"
 )
@@ -49,6 +50,50 @@ func CreateCurrencyMenu(MenuID string, GuildID string, msg *discordgo.Message, c
 			// Redraw the embed.
 			_ = client.MessageReactionsRemoveAll(ChannelID, MessageID)
 			currency.SaveCurrency(GuildID, cur)
+			CreateCurrencyMenu(MenuID, GuildID, msg, cur).Display(ChannelID, MessageID, client)
+		},
+	})
+
+	// Used to set the reaction used for the currency.
+	var Emoji string
+	if cur.Emoji != nil {
+		Emoji = *cur.Emoji
+	} else {
+		Emoji = "💵 (default)"
+	}
+	Menu.Reactions.Add(embedmenus.MenuReaction{
+		Button: embedmenus.MenuButton{
+			Emoji:       "💵",
+			Name:        "Currency Emoji",
+			Description: "Allows you to set the emoji used for currency.\n**Current Emoji:** " + Emoji,
+		},
+		Function: func(ChannelID string, MessageID string, menu *embedmenus.EmbedMenu, client *discordgo.Session) {
+			// Remove all reactions.
+			_ = client.MessageReactionsRemoveAll(ChannelID, MessageID)
+
+			// Show the warning.
+			_, _ = client.ChannelMessageEditComplex(&discordgo.MessageEdit{
+				Embed:   &discordgo.MessageEmbed{
+					Title:       "Enter emoji:",
+					Description: "Please react to this embed with the emoji you want for the currency.",
+					Color:       styles.Generic,
+				},
+				ID:      MessageID,
+				Channel: ChannelID,
+			})
+
+			// Wait for the emoji.
+			emoji := reactionwaiter.WaitForReaction(MessageID, msg.Author.ID, 0)
+
+			// Handles saving the emoji.
+			e := emoji.MessageFormat()
+			cur.Emoji = &e
+			currency.SaveCurrency(GuildID, cur)
+
+			// Clean up the emoji.
+			_ = client.MessageReactionsRemoveAll(ChannelID, MessageID)
+
+			// Redraw the embed.
 			CreateCurrencyMenu(MenuID, GuildID, msg, cur).Display(ChannelID, MessageID, client)
 		},
 	})

@@ -4,7 +4,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/jakemakesstuff/Cube/cube/cacher"
 	"github.com/jakemakesstuff/Cube/cube/command_processor"
-	"github.com/jakemakesstuff/Cube/cube/wait_for_message"
+	"github.com/jakemakesstuff/Cube/cube/message_waiter"
 	"time"
 )
 
