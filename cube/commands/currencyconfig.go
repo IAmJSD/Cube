@@ -70,6 +70,9 @@ func CurrencyDropsMenu(Parent embedmenus.EmbedMenu, msg *discordgo.Message, Mess
 			Description: "Allows you to configure showing an image URL with the drop or turning it off.",
 		},
 		Function: func(ChannelID string, MessageID string, menu *embedmenus.EmbedMenu, client *discordgo.Session) {
+			// Clear the reactions.
+			_ = client.MessageReactionsRemoveAll(ChannelID, MessageID)
+
 			// Shows the box which prompts the user to insert an image URL or "disable".
 			_, _ = client.ChannelMessageEditComplex(&discordgo.MessageEdit{
 				Embed: &discordgo.MessageEmbed{
@@ -95,7 +98,6 @@ func CurrencyDropsMenu(Parent embedmenus.EmbedMenu, msg *discordgo.Message, Mess
 			_ = client.ChannelMessageDelete(msg.ChannelID, usrMessage.ID)
 
 			// Redraw the embed.
-			_ = client.MessageReactionsRemoveAll(ChannelID, MessageID)
 			currency.SaveCurrency(msg.GuildID, cur)
 			CurrencyDropsMenu(Parent, msg, MessageID, client, cur)
 		},
@@ -113,6 +115,9 @@ func CurrencyDropsMenu(Parent embedmenus.EmbedMenu, msg *discordgo.Message, Mess
 			Description: "Allows you to select how much will be dropped.\n**Current Amount:** " + DropsAmount,
 		},
 		Function: func(ChannelID string, MessageID string, menu *embedmenus.EmbedMenu, client *discordgo.Session) {
+			// Clear the reactions.
+			_ = client.MessageReactionsRemoveAll(ChannelID, MessageID)
+
 			// Shows the box which prompts the user to insert an image URL or "disable".
 			_, _ = client.ChannelMessageEditComplex(&discordgo.MessageEdit{
 				Embed: &discordgo.MessageEmbed{
@@ -135,7 +140,6 @@ func CurrencyDropsMenu(Parent embedmenus.EmbedMenu, msg *discordgo.Message, Mess
 			_ = client.ChannelMessageDelete(msg.ChannelID, usrMessage.ID)
 
 			// Redraw the embed.
-			_ = client.MessageReactionsRemoveAll(ChannelID, MessageID)
 			currency.SaveCurrency(msg.GuildID, cur)
 			CurrencyDropsMenu(Parent, msg, MessageID, client, cur)
 		},
