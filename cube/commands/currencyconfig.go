@@ -73,7 +73,7 @@ func init() {
 			}
 
 			// Show the embed.
-			CreateCurrencyMenu(MenuID, Args.Message.GuildID, m).Display(Args.Channel.ID, Args.Message.ID, Args.Session)
+			CreateCurrencyMenu(MenuID, Args.Message.GuildID, Args.Message).Display(Args.Channel.ID, m.ID, Args.Session)
 		},
 	}
 }
