@@ -53,7 +53,7 @@ func init() {
 			err = wallets.SubtractFromBalance(Args.Message.Author.ID, Args.Message.GuildID, int64(i))
 			if err == nil {
 				// Drop the currency.
-				drops.ExecuteDrop(Args.Channel.ID, Args.Session, i, Args.Prefix, Args.Message.Author.Mention()+" has dropped "+*cur.Emoji+strconv.Itoa(i)+".", cur.DropsImage)
+				drops.ExecuteDrop(Args.Channel.ID, Args.Session, i, Args.Prefix, Args.Message.Author.Mention()+" has dropped "+*cur.Emoji+" "+strconv.Itoa(i)+".", cur.DropsImage)
 			}
 		},
 	}
