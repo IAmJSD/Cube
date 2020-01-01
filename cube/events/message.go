@@ -3,13 +3,17 @@ package events
 import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/jakemakesstuff/Cube/cube/cacher"
-	commandprocessor "github.com/jakemakesstuff/Cube/cube/command_processor"
+	"github.com/jakemakesstuff/Cube/cube/command_processor"
+	"github.com/jakemakesstuff/Cube/cube/wait_for_message"
 	"time"
 )
 
 func init() {
 	// Defines the message handler.
 	Events = append(Events, func(s *discordgo.Session, m *discordgo.MessageCreate) {
+		// Handle message waiters.
+		go messagewaiter.MessageWaitHandler(m.Message)
+
 		go func() {
 			// Gets the start time.
 			StartTime := time.Now()
