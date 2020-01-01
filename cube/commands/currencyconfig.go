@@ -16,8 +16,26 @@ import (
 )
 
 // CurrencyDropsMenu is the menu used for currency drops.
-func CurrencyDropsMenu(Parent embedmenus.EmbedMenu) {
-	// TODO: This.
+func CurrencyDropsMenu(Parent embedmenus.EmbedMenu, msg *discordgo.Message, MessageID string, client *discordgo.Session) {
+	// Creates the menu.
+	Menu := embedmenus.NewEmbedMenu(
+		discordgo.MessageEmbed{
+			Title:       "Currency Drops",
+			Description: "This menu allows you to configure currency drops.",
+			Color:       styles.Generic,
+		}, &embedmenus.MenuInfo{
+			MenuID: Parent.MenuInfo.MenuID,
+			Author: msg.Author.ID,
+			Info:   []string{},
+		},
+	)
+	Menu.AddParentMenu(&Parent)
+
+	// Adds a back button.
+	Menu.AddBackButton()
+
+	// Displays the menu.
+	Menu.Display(msg.ChannelID, MessageID, client)
 }
 
 // CreateCurrencyMenu is used to create the currency config menu.
@@ -107,7 +125,20 @@ func CreateCurrencyMenu(MenuID string, GuildID string, msg *discordgo.Message, c
 	})
 
 	// Used to handle currency drops.
-	CurrencyDropsMenu(Menu)
+	Menu.Reactions.Add(embedmenus.MenuReaction{
+		Button: embedmenus.MenuButton{
+			Emoji:       "💸",
+			Name:        "Currency Drops",
+			Description: "Allows you to configure currency drops in your guild.",
+		},
+		Function: func(ChannelID string, MessageID string, _ *embedmenus.EmbedMenu, client *discordgo.Session) {
+			// Remove all reactions.
+			_ = client.MessageReactionsRemoveAll(ChannelID, MessageID)
+
+			// Draw the embed.
+			CurrencyDropsMenu(Menu, msg, MessageID, client)
+		},
+	})
 
 	// Used to purge all guild wallets.
 	Menu.Reactions.Add(embedmenus.MenuReaction{

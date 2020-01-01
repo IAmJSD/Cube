@@ -11,6 +11,11 @@ func (mr *MenuReactions) Add(reaction MenuReaction) {
 	mr.ReactionSlice = Slice
 }
 
+// AddParent is used to add a new parent menu.
+func (emm *EmbedMenu) AddParentMenu(Menu *EmbedMenu) {
+	emm.parent = Menu
+}
+
 // Display is used to show a menu.
 func (emm EmbedMenu) Display(ChannelID string, MessageID string, client *discordgo.Session) *error {
 	MenuCache[emm.MenuInfo.MenuID] = &emm
