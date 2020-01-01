@@ -6,4 +6,5 @@ type Currency struct {
 	Enabled      bool
 	DropsEnabled bool
 	DropsImage   *string
+	DropsAmount  *int
 }

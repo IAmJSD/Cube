@@ -12,6 +12,7 @@ import (
 	"github.com/jakemakesstuff/Cube/cube/reaction_waiter"
 	"github.com/jakemakesstuff/Cube/cube/styles"
 	"github.com/jakemakesstuff/Cube/cube/wallets"
+	"strconv"
 	"strings"
 )
 
@@ -88,6 +89,46 @@ func CurrencyDropsMenu(Parent embedmenus.EmbedMenu, msg *discordgo.Message, Mess
 			} else {
 				// No we shouldn't.
 				cur.DropsImage = &usrMessage.Content
+			}
+
+			// Try and clean up the message.
+			_ = client.ChannelMessageDelete(msg.ChannelID, usrMessage.ID)
+
+			// Redraw the embed.
+			_ = client.MessageReactionsRemoveAll(ChannelID, MessageID)
+			currency.SaveCurrency(msg.GuildID, cur)
+			CurrencyDropsMenu(Parent, msg, MessageID, client, cur)
+		},
+	})
+
+	// Handles the drop amount.
+	DropsAmount := "100 (default)"
+	if cur.DropsAmount != nil {
+		DropsAmount = strconv.Itoa(*cur.DropsAmount)
+	}
+	Menu.Reactions.Add(embedmenus.MenuReaction{
+		Button: embedmenus.MenuButton{
+			Emoji:       "💵",
+			Name:        "Drop Amount",
+			Description: "Allows you to select how much will be dropped.\n**Current Amount:** " + DropsAmount,
+		},
+		Function: func(ChannelID string, MessageID string, menu *embedmenus.EmbedMenu, client *discordgo.Session) {
+			// Shows the box which prompts the user to insert an image URL or "disable".
+			_, _ = client.ChannelMessageEditComplex(&discordgo.MessageEdit{
+				Embed: &discordgo.MessageEmbed{
+					Title:       "Please enter the amount:",
+					Description: "Please enter the amount which you would like to drop.",
+					Color:       styles.Generic,
+				},
+				ID:      MessageID,
+				Channel: ChannelID,
+			})
+			usrMessage := messagewaiter.WaitForMessage(ChannelID, msg.Author.ID, 0)
+
+			// Gets the int value.
+			i, err := strconv.Atoi(strings.Trim(usrMessage.Content, " "))
+			if err == nil {
+				cur.DropsAmount = &i
 			}
 
 			// Try and clean up the message.
