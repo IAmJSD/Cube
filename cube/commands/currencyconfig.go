@@ -61,6 +61,45 @@ func CurrencyDropsMenu(Parent embedmenus.EmbedMenu, msg *discordgo.Message, Mess
 		},
 	})
 
+	// Handles whether an image should be shown with the drop.
+	Menu.Reactions.Add(embedmenus.MenuReaction{
+		Button: embedmenus.MenuButton{
+			Emoji:       "🌄",
+			Name:        "Drop Image",
+			Description: "Allows you to configure showing an image URL with the drop or turning it off.",
+		},
+		Function: func(ChannelID string, MessageID string, menu *embedmenus.EmbedMenu, client *discordgo.Session) {
+			// Shows the box which prompts the user to insert an image URL or "disable".
+			_, _ = client.ChannelMessageEditComplex(&discordgo.MessageEdit{
+				Embed: &discordgo.MessageEmbed{
+					Title:       "Type your image URL or \"disable\":",
+					Description: "Please enter your image URL. If you wish to disable the image embed, please type \"disable\".",
+					Color:       styles.Generic,
+				},
+				ID:      MessageID,
+				Channel: ChannelID,
+			})
+			usrMessage := messagewaiter.WaitForMessage(ChannelID, msg.Author.ID, 0)
+
+			// Check if we should disable the embed.
+			if strings.ToLower(strings.Trim(usrMessage.Content, " ")) == "disable" {
+				// Yes we should.
+				cur.DropsImage = nil
+			} else {
+				// No we shouldn't.
+				cur.DropsImage = &usrMessage.Content
+			}
+
+			// Try and clean up the message.
+			_ = client.ChannelMessageDelete(msg.ChannelID, usrMessage.ID)
+
+			// Redraw the embed.
+			_ = client.MessageReactionsRemoveAll(ChannelID, MessageID)
+			currency.SaveCurrency(msg.GuildID, cur)
+			CurrencyDropsMenu(Parent, msg, MessageID, client, cur)
+		},
+	})
+
 	// Displays the menu.
 	Menu.Display(msg.ChannelID, MessageID, client)
 }

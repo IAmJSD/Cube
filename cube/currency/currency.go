@@ -5,4 +5,5 @@ type Currency struct {
 	Emoji        *string
 	Enabled      bool
 	DropsEnabled bool
+	DropsImage   *string
 }
