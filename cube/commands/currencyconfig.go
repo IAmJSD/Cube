@@ -16,7 +16,7 @@ import (
 )
 
 // CurrencyDropsMenu is the menu used for currency drops.
-func CurrencyDropsMenu(Parent embedmenus.EmbedMenu, msg *discordgo.Message, MessageID string, client *discordgo.Session) {
+func CurrencyDropsMenu(Parent embedmenus.EmbedMenu, msg *discordgo.Message, MessageID string, client *discordgo.Session, cur *currency.Currency) {
 	// Creates the menu.
 	Menu := embedmenus.NewEmbedMenu(
 		discordgo.MessageEmbed{
@@ -33,6 +33,33 @@ func CurrencyDropsMenu(Parent embedmenus.EmbedMenu, msg *discordgo.Message, Mess
 
 	// Adds a back button.
 	Menu.AddBackButton()
+
+	// Add a toggle for currency drops.
+	var EnableDisableCurrencyDrops string
+	var EnabledEmoji string
+	if cur.DropsEnabled {
+		EnableDisableCurrencyDrops = "Disable Currency Drops"
+		EnabledEmoji = "❗"
+	} else {
+		EnableDisableCurrencyDrops = "Enable Currency Drops"
+		EnabledEmoji = "✅"
+	}
+	Menu.Reactions.Add(embedmenus.MenuReaction{
+		Button: embedmenus.MenuButton{
+			Emoji:       EnabledEmoji,
+			Name:        EnableDisableCurrencyDrops,
+			Description: "Toggles the currency drops in this guild.",
+		},
+		Function: func(ChannelID string, MessageID string, menu *embedmenus.EmbedMenu, client *discordgo.Session) {
+			// Preform the action.
+			cur.DropsEnabled = !cur.DropsEnabled
+
+			// Redraw the embed.
+			_ = client.MessageReactionsRemoveAll(ChannelID, MessageID)
+			currency.SaveCurrency(msg.GuildID, cur)
+			CurrencyDropsMenu(Parent, msg, MessageID, client, cur)
+		},
+	})
 
 	// Displays the menu.
 	Menu.Display(msg.ChannelID, MessageID, client)
@@ -136,7 +163,7 @@ func CreateCurrencyMenu(MenuID string, GuildID string, msg *discordgo.Message, c
 			_ = client.MessageReactionsRemoveAll(ChannelID, MessageID)
 
 			// Draw the embed.
-			CurrencyDropsMenu(Menu, msg, MessageID, client)
+			CurrencyDropsMenu(Menu, msg, MessageID, client, cur)
 		},
 	})
 
