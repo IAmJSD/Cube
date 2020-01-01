@@ -3,7 +3,7 @@ package embedmenus
 import "github.com/bwmarrin/discordgo"
 
 // MenuCache is used to represent all of the current menus.
-var MenuCache map[string]*EmbedMenu
+var MenuCache = map[string]*EmbedMenu{}
 
 // MenuInfo contains the information about the menu.
 type MenuInfo struct {
