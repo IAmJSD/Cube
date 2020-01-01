@@ -15,6 +15,11 @@ import (
 	"strings"
 )
 
+// CurrencyDropsMenu is the menu used for currency drops.
+func CurrencyDropsMenu(Parent embedmenus.EmbedMenu) {
+	// TODO: This.
+}
+
 // CreateCurrencyMenu is used to create the currency config menu.
 func CreateCurrencyMenu(MenuID string, GuildID string, msg *discordgo.Message, cur *currency.Currency) *embedmenus.EmbedMenu {
 	// Creates the embed menu.
@@ -32,14 +37,17 @@ func CreateCurrencyMenu(MenuID string, GuildID string, msg *discordgo.Message, c
 
 	// Add a toggle for the currency.
 	var EnableDisableCurrency string
+	var EnabledEmoji string
 	if cur.Enabled {
 		EnableDisableCurrency = "Disable Currency"
+		EnabledEmoji = "❗"
 	} else {
 		EnableDisableCurrency = "Enable Currency"
+		EnabledEmoji = "✅"
 	}
 	Menu.Reactions.Add(embedmenus.MenuReaction{
 		Button: embedmenus.MenuButton{
-			Emoji:       "🔐",
+			Emoji:       EnabledEmoji,
 			Name:        EnableDisableCurrency,
 			Description: "Toggles the currency in this guild.",
 		},
@@ -97,6 +105,9 @@ func CreateCurrencyMenu(MenuID string, GuildID string, msg *discordgo.Message, c
 			CreateCurrencyMenu(MenuID, GuildID, msg, cur).Display(ChannelID, MessageID, client)
 		},
 	})
+
+	// Used to handle currency drops.
+	CurrencyDropsMenu(Menu)
 
 	// Used to purge all guild wallets.
 	Menu.Reactions.Add(embedmenus.MenuReaction{
