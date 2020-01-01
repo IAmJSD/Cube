@@ -12,6 +12,11 @@ import (
 func init() {
 	// Defines the message handler.
 	Events = append(Events, func(s *discordgo.Session, m *discordgo.MessageCreate) {
+		// Check if the author is a bot and return if so.
+		if m.Author.Bot {
+			return
+		}
+
 		// Handle message waiters.
 		go messagewaiter.MessageWaitHandler(m.Message)
 
