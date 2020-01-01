@@ -15,9 +15,9 @@ var waitersLock = sync.RWMutex{}
 // MessageWaiter is the struct used to describe someone waiting for their message.
 type MessageWaiter struct {
 	ChannelID string
-	UserID string
-	Channel chan *discordgo.Message
-	Done bool
+	UserID    string
+	Channel   chan *discordgo.Message
+	Done      bool
 }
 
 // Result is used to cast a message into the channel.
@@ -40,8 +40,8 @@ func WaitForMessage(ChannelID string, UserID string, Timeout int) *discordgo.Mes
 	Channel := make(chan *discordgo.Message)
 	waiter := MessageWaiter{
 		ChannelID: ChannelID,
-		UserID: UserID,
-		Channel: Channel,
+		UserID:    UserID,
+		Channel:   Channel,
 	}
 	waitersLock.Lock()
 	waiters = append(waiters, &waiter)

@@ -73,7 +73,7 @@ func CreateCurrencyMenu(MenuID string, GuildID string, msg *discordgo.Message, c
 
 			// Show the emoji popup.
 			_, _ = client.ChannelMessageEditComplex(&discordgo.MessageEdit{
-				Embed:   &discordgo.MessageEmbed{
+				Embed: &discordgo.MessageEmbed{
 					Title:       "React with the emoji:",
 					Description: "Please react to this embed with the emoji you want for the currency.",
 					Color:       styles.Generic,
@@ -111,7 +111,7 @@ func CreateCurrencyMenu(MenuID string, GuildID string, msg *discordgo.Message, c
 
 			// Show the warning.
 			_, _ = client.ChannelMessageEditComplex(&discordgo.MessageEdit{
-				Embed:   &discordgo.MessageEmbed{
+				Embed: &discordgo.MessageEmbed{
 					Title:       "Here be dragons!",
 					Description: "This will delete __**EVERY SINGLE GUILD WALLET**__ and cannot be undone. Type \"yes\" if you wish to continue or anything else to not continue (**this is not case sensitive, pranking fellow admins with this isn't smart!**).",
 					Color:       styles.Error,
