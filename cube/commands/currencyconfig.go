@@ -11,10 +11,7 @@ import (
 )
 
 // CreateCurrencyMenu is used to create the currency config menu.
-func CreateCurrencyMenu(MenuID string, GuildID string, msg *discordgo.Message) *embedmenus.EmbedMenu {
-	// Gets the currency.
-	cur := currency.GetCurrency(GuildID)
-
+func CreateCurrencyMenu(MenuID string, GuildID string, msg *discordgo.Message, cur *currency.Currency) *embedmenus.EmbedMenu {
 	// Creates the embed menu.
 	Menu := embedmenus.NewEmbedMenu(
 		discordgo.MessageEmbed{
@@ -43,7 +40,7 @@ func CreateCurrencyMenu(MenuID string, GuildID string, msg *discordgo.Message) *
 		},
 		Function: func(ChannelID string, MessageID string, menu *embedmenus.EmbedMenu, client *discordgo.Session) {
 			_ = client.MessageReactionsRemoveAll(ChannelID, MessageID)
-			defer CreateCurrencyMenu(MenuID, GuildID, msg).Display(ChannelID, MessageID, client)
+			defer CreateCurrencyMenu(MenuID, GuildID, msg, cur).Display(ChannelID, MessageID, client)
 			cur.Enabled = !cur.Enabled
 			currency.SaveCurrency(GuildID, cur)
 		},
@@ -59,6 +56,9 @@ func init() {
 		Category:         categories.CURRENCY,
 		PermissionsCheck: permissions.ADMINISTRATOR,
 		Function: func(Args *commandprocessor.CommandArgs) {
+			// Gets the currency.
+			cur := currency.GetCurrency(Args.Message.GuildID)
+
 			// Gets the menu ID.
 			MenuID := uuid.Must(uuid.NewRandom()).String()
 
@@ -73,7 +73,7 @@ func init() {
 			}
 
 			// Show the embed.
-			CreateCurrencyMenu(MenuID, Args.Message.GuildID, Args.Message).Display(Args.Channel.ID, m.ID, Args.Session)
+			CreateCurrencyMenu(MenuID, Args.Message.GuildID, Args.Message, cur).Display(Args.Channel.ID, m.ID, Args.Session)
 		},
 	}
 }
