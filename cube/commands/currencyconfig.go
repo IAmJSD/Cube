@@ -294,7 +294,7 @@ func CreateCurrencyMenu(MenuID string, GuildID string, msg *discordgo.Message, c
 func init() {
 	commandprocessor.Commands["currencyconfig"] = &commandprocessor.Command{
 		Description:      "Used to configure the currency in this guild.",
-		Category:         categories.CURRENCY,
+		Category:         categories.ADMINISTRATOR,
 		PermissionsCheck: permissions.ADMINISTRATOR,
 		Function: func(Args *commandprocessor.CommandArgs) {
 			// Gets the currency.
