@@ -81,6 +81,9 @@ func CreateCurrencyMenu(MenuID string, GuildID string, msg *discordgo.Message, c
 				wallets.PurgeGuildWallets(msg.GuildID)
 			}
 
+			// Try and clean up the message.
+			_ = client.ChannelMessageDelete(msg.ChannelID, confirmationOrNot.ID)
+
 			// Redraw the embed.
 			CreateCurrencyMenu(MenuID, GuildID, msg, cur).Display(ChannelID, MessageID, client)
 		},
