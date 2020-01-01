@@ -133,6 +133,9 @@ func CurrencyDropsMenu(Parent embedmenus.EmbedMenu, msg *discordgo.Message, Mess
 			// Gets the int value.
 			i, err := strconv.Atoi(strings.Trim(usrMessage.Content, " "))
 			if err == nil {
+				if 0 >= i {
+					i = 1
+				}
 				cur.DropsAmount = &i
 			}
 
