@@ -71,10 +71,10 @@ func CreateCurrencyMenu(MenuID string, GuildID string, msg *discordgo.Message, c
 			// Remove all reactions.
 			_ = client.MessageReactionsRemoveAll(ChannelID, MessageID)
 
-			// Show the warning.
+			// Show the emoji popup.
 			_, _ = client.ChannelMessageEditComplex(&discordgo.MessageEdit{
 				Embed:   &discordgo.MessageEmbed{
-					Title:       "Enter emoji:",
+					Title:       "React with the emoji:",
 					Description: "Please react to this embed with the emoji you want for the currency.",
 					Color:       styles.Generic,
 				},
