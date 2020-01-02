@@ -73,10 +73,11 @@ func init() {
 			wg := sync.WaitGroup{}
 			wg.Add(len(dump.Wallets))
 			for k, v := range dump.Wallets {
-				go func() {
-					wallets.SetBalance(k, Args.Message.GuildID, int64(v))
+				Value := int64(v)
+				go func(Key string, x int64) {
+					wallets.SetBalance(Key, Args.Message.GuildID, x)
 					wg.Done()
-				}()
+				}(k, Value)
 			}
 			wg.Wait()
 
