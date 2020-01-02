@@ -13,9 +13,16 @@ import (
 	"github.com/jakemakesstuff/Cube/cube/wallets"
 )
 
+// dumpedConfig defines the structure of a dumped config.
+type dumpedConfig struct {
+	Prefix         *string
+	CurrencyConfig *currency.Currency
+	Wallets        map[string]int
+}
+
 func init() {
 	commandprocessor.Commands["dumpconfig"] = &commandprocessor.Command{
-		Description:      "Allows you to dump a guilds configuration.",
+		Description:      "Allows you to dump a guilds configuration. Useful for migrating between instances of the bot, making advanced changes and keeping a backup.",
 		Category:         categories.ADMINISTRATOR,
 		PermissionsCheck: permissions.ADMINISTRATOR,
 		Function: func(Args *commandprocessor.CommandArgs) {
@@ -25,10 +32,10 @@ func init() {
 			if err == nil {
 				Prefix = &p
 			}
-			Config := map[string]interface{}{
-				"Wallets":        wallets.GetAll(Args.Message.GuildID),
-				"CurrencyConfig": currency.GetCurrency(Args.Message.GuildID),
-				"Prefix":         Prefix,
+			Config := dumpedConfig{
+				Wallets:        wallets.GetAll(Args.Message.GuildID),
+				CurrencyConfig: currency.GetCurrency(Args.Message.GuildID),
+				Prefix:         Prefix,
 			}
 
 			// Marshal the config into JSON.
