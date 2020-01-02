@@ -1,5 +1,12 @@
 package currency
 
+// BuyableRole defines a role which you can buy.
+type BuyableRole struct {
+	Amount       int
+	Description  string
+	TrialAllowed bool
+}
+
 // Currency is the struct which all guild currencies will be based on.
 type Currency struct {
 	Emoji        *string
@@ -7,4 +14,5 @@ type Currency struct {
 	DropsEnabled bool
 	DropsImage   *string
 	DropsAmount  *int
+	RoleShop     []*BuyableRole
 }
