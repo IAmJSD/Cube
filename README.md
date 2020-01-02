@@ -17,6 +17,7 @@ Additionally, the following environment variables need to be set:
 - `TOKEN` - The Discord bot token which is in use.
 - `DEFAULT_PREFIX` - The default prefix for the bot to use.
 - `REDIS_ADDR` - The address for the Redis host.
+- `SENTRY_DSN` - The Sentry DSN for the variable.
 
 The following environment variables are optional:
 - `REDIS_PASSWORD` - The password for the Redis instance. This is obviously required if your Redis instance is password protected.
