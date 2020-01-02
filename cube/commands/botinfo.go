@@ -8,6 +8,7 @@ import (
 	guildscount "github.com/jakemakesstuff/Cube/cube/guilds_count"
 	"github.com/jakemakesstuff/Cube/cube/messages"
 	"github.com/jakemakesstuff/Cube/cube/utils"
+	"runtime"
 )
 
 func init() {
@@ -15,6 +16,11 @@ func init() {
 		Description: "Shows information about the bot.",
 		Category:    categories.INFORMATIONAL,
 		Function: func(Args *commandprocessor.CommandArgs) {
+			// Get runtime info.
+			var m runtime.MemStats
+			runtime.ReadMemStats(&m)
+
+			// Render the information.
 			messages.GenericText(
 				Args.Channel, "Cube Information:",
 				"Cube is a open source bot hosted by JakeMakesStuff#0001.",
@@ -42,6 +48,11 @@ func init() {
 					{
 						Name:   "Guilds:",
 						Value:  fmt.Sprintf("%v", guildscount.Count()),
+						Inline: true,
+					},
+					{
+						Name:   "Memory Allocated:",
+						Value:  fmt.Sprintf("%v MB", m.Alloc / 1024 / 1024),
 						Inline: true,
 					},
 				}, Args.Session,
