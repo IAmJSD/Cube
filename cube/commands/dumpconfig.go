@@ -32,7 +32,7 @@ func init() {
 			}
 
 			// Marshal the config into JSON.
-			ConfigBytes, err := json.Marshal(&Config)
+			ConfigBytes, err := json.MarshalIndent(&Config, "", "  ")
 			if err != nil {
 				// TODO: Report to Sentry!
 				return
