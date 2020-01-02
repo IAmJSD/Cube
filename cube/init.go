@@ -3,6 +3,7 @@ package cube
 import (
 	"fmt"
 	"github.com/bwmarrin/discordgo"
+	"github.com/getsentry/sentry-go"
 	"github.com/jakemakesstuff/Cube/cube/events"
 	"github.com/jakemakesstuff/Cube/cube/sharding"
 	"math/rand"
@@ -22,6 +23,14 @@ import (
 func Init() {
 	// Set the random number seed.
 	rand.Seed(time.Now().UnixNano())
+
+	// Create the Sentry instance.
+	err := sentry.Init(sentry.ClientOptions{
+		Dsn: os.Getenv("SENTRY_DSN"),
+	})
+	if err != nil {
+		panic(err)
+	}
 
 	// Creates the Discord session.
 	session, err := discordgo.New("Bot " + Token)

@@ -2,6 +2,7 @@ package commands
 
 import (
 	"encoding/json"
+	"github.com/getsentry/sentry-go"
 	"github.com/jakemakesstuff/Cube/cube/categories"
 	"github.com/jakemakesstuff/Cube/cube/command_processor"
 	"github.com/jakemakesstuff/Cube/cube/messages"
@@ -38,12 +39,12 @@ func init() {
 			// Parse the JSON.
 			r, err := structuredhttp.GET(Attachment.URL).Timeout(time.Second * 10).Run()
 			if err != nil {
-				// TODO: Report to Sentry!
+				sentry.CaptureException(err)
 				return
 			}
 			err = r.RaiseForStatus()
 			if err != nil {
-				// TODO: Report to Sentry!
+				sentry.CaptureException(err)
 				return
 			}
 			d := json.NewDecoder(r.RawResponse.Body)
@@ -64,7 +65,7 @@ func init() {
 			// Sets the currency config.
 			CurrencyConfig, err := json.Marshal(dump.CurrencyConfig)
 			if err != nil {
-				// TODO: Report to Sentry!
+				sentry.CaptureException(err)
 				return
 			}
 			redis.Client.Set("C:"+Args.Message.GuildID, CurrencyConfig, 0)

@@ -52,7 +52,7 @@ func init() {
 					},
 					{
 						Name:   "Memory Allocated:",
-						Value:  fmt.Sprintf("%v MB", m.Alloc / 1024 / 1024),
+						Value:  fmt.Sprintf("%v MB", m.Alloc/1024/1024),
 						Inline: true,
 					},
 				}, Args.Session,

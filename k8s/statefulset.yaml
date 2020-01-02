@@ -38,6 +38,11 @@ spec:
                 secretKeyRef:
                   name: cube
                   key: default_prefix
+            - name: SENTRY_DSN
+              valueFrom:
+                secretKeyRef:
+                  name: cube
+                  key: sentry_dsn
             - name: POD_NAME
               valueFrom:
                 fieldRef:

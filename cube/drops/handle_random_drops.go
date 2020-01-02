@@ -2,6 +2,7 @@ package drops
 
 import (
 	"github.com/bwmarrin/discordgo"
+	"github.com/getsentry/sentry-go"
 	"github.com/jakemakesstuff/Cube/cube/currency"
 	"github.com/jakemakesstuff/Cube/cube/redis"
 	"os"
@@ -33,7 +34,7 @@ func HandleRandomDrops(msg *discordgo.Message, Session *discordgo.Session) {
 		// Set the new prefix.
 		Prefix = r
 	} else if err != redis.Nil {
-		// TODO: Report this error to Sentry!
+		sentry.CaptureException(err)
 		panic(err)
 	}
 

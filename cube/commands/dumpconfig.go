@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/bwmarrin/discordgo"
+	"github.com/getsentry/sentry-go"
 	"github.com/jakemakesstuff/Cube/cube/categories"
 	"github.com/jakemakesstuff/Cube/cube/command_processor"
 	"github.com/jakemakesstuff/Cube/cube/currency"
@@ -41,7 +42,7 @@ func init() {
 			// Marshal the config into JSON.
 			ConfigBytes, err := json.MarshalIndent(&Config, "", "  ")
 			if err != nil {
-				// TODO: Report to Sentry!
+				sentry.CaptureException(err)
 				return
 			}
 

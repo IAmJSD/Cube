@@ -2,6 +2,7 @@ package events
 
 import (
 	"github.com/bwmarrin/discordgo"
+	"github.com/getsentry/sentry-go"
 	"github.com/jakemakesstuff/Cube/cube/cacher"
 	"github.com/jakemakesstuff/Cube/cube/command_processor"
 	"github.com/jakemakesstuff/Cube/cube/drops"
@@ -30,7 +31,7 @@ func init() {
 			// Gets the channel.
 			channel, err := cacher.GetChannel(m.ChannelID, s)
 			if err != nil {
-				// TODO: Error report here to Sentry.
+				sentry.CaptureException(err)
 				return
 			}
 
