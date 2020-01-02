@@ -3,6 +3,7 @@ package currency
 // BuyableRole defines a role which you can buy.
 type BuyableRole struct {
 	Amount       int
+	RoleID       string
 	Description  string
 	TrialAllowed bool
 }
