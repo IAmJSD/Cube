@@ -1,4 +1,6 @@
-[logo](./branding.png)
+<img src="https://i.imgur.com/fG94ZeC.png" width="300" height="100">
+
+---
 
 **A bot designed to run the economy of your Discord server with very little configuration required. You can invite the bot [here](https://discordapp.com/oauth2/authorize?client_id=660941659613298689&scope=bot&permissions=1546775744).**
 
