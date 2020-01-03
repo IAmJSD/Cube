@@ -1,11 +1,10 @@
 package roleshop
 
-// TODO: Implement admin panel.
-
 import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/jakemakesstuff/Cube/cube/currency"
 	"github.com/jakemakesstuff/Cube/cube/embed_menus"
+	"github.com/jakemakesstuff/Cube/cube/redis"
 	"github.com/jakemakesstuff/Cube/cube/styles"
 	"github.com/jakemakesstuff/Cube/cube/wallets"
 	"math"
@@ -51,6 +50,55 @@ func ShowRoleShop(
 	if Parent != nil {
 		menu.AddParentMenu(Parent)
 		menu.AddBackButton()
+	}
+
+	// Add back/forward buttons.
+	if Page != 1 {
+		menu.Reactions.Add(embedmenus.MenuReaction{
+			Button: embedmenus.MenuButton{
+				Emoji:       "◀️️",
+				Name:        "Page Back",
+				Description: "Goes back a page.",
+			},
+			Function: func(_ string, _ string, _ *embedmenus.EmbedMenu, _ *discordgo.Session) {
+				// Remove all reactions.
+				_ = session.MessageReactionsRemoveAll(msg.ChannelID, MessageID)
+
+				// Redraw the parent embed.
+				ShowRoleShop(Page-1, Parent, Currency, Config, MenuID, msg, session, MessageID)
+			},
+		})
+	}
+	if Page != TotalPages {
+		menu.Reactions.Add(embedmenus.MenuReaction{
+			Button: embedmenus.MenuButton{
+				Emoji:       "️▶️",
+				Name:        "Page Forward",
+				Description: "Goes forward a page.",
+			},
+			Function: func(_ string, _ string, _ *embedmenus.EmbedMenu, _ *discordgo.Session) {
+				// Remove all reactions.
+				_ = session.MessageReactionsRemoveAll(msg.ChannelID, MessageID)
+
+				// Redraw the parent embed.
+				ShowRoleShop(Page+1, Parent, Currency, Config, MenuID, msg, session, MessageID)
+			},
+		})
+	}
+	if Config {
+		menu.Reactions.Add(embedmenus.MenuReaction{
+			Button: embedmenus.MenuButton{
+				Emoji:       "️⚒️️",
+				Name:        "Add Role",
+				Description: "Allows you to add a role into the bot.",
+			},
+			Function: func(_ string, _ string, _ *embedmenus.EmbedMenu, _ *discordgo.Session) {
+				// Remove all reactions.
+				_ = session.MessageReactionsRemoveAll(msg.ChannelID, MessageID)
+
+				// TODO: Add role screen!
+			},
+		})
 	}
 
 	// Handle the role.
@@ -158,6 +206,9 @@ func ShowRoleShop(
 							// Take the money.
 							_ = wallets.SubtractFromBalance(msg.Author.ID, msg.GuildID, int64(Cost))
 
+							// Handle trials.
+							handleBuyTrial(role.ID, msg.Author.ID)
+
 							// Remove the role from listings but DO NOT SAVE IT.
 							copy(Currency.RoleShop[index:], Currency.RoleShop[index+1:])
 							Currency.RoleShop = Currency.RoleShop[:len(Currency.RoleShop)-1]
@@ -168,7 +219,46 @@ func ShowRoleShop(
 					ShowRoleShop(Page, Parent, Currency, Config, MenuID, msg, session, MessageID)
 				},
 			})
-			// TODO: Implement trials.
+
+			// Manage the trials.
+			if TrialAllowed {
+				RoleMenu.Reactions.Add(embedmenus.MenuReaction{
+					Button: embedmenus.MenuButton{
+						Emoji:       "💳",
+						Name:        "Trial Role",
+						Description: "Allows you to trial the role for 1 minute from the store.",
+					},
+					Function: func(_ string, _ string, _ *embedmenus.EmbedMenu, _ *discordgo.Session) {
+						// Remove all reactions.
+						_ = session.MessageReactionsRemoveAll(msg.ChannelID, MessageID)
+
+						// Wait for the trial to be over.
+						_, _ = session.ChannelMessageEditComplex(&discordgo.MessageEdit{
+							Content: nil,
+							Embed: &discordgo.MessageEmbed{
+								Title:       "You are trialing the role:",
+								Description: "You now have 1 minute with the role. Go ahead and try the role!",
+								Color:       styles.Generic,
+							},
+							ID:      MessageID,
+							Channel: msg.ChannelID,
+						})
+						RemoveRole := waitForTrial(role.ID, msg.Author.ID)
+						redis.Client.SAdd("t:"+role.ID, msg.Author.ID)
+						if RemoveRole {
+							// Remove the role if possible.
+							_ = session.GuildMemberRoleRemove(msg.GuildID, msg.Author.ID, role.ID)
+
+							// Redraw this embed with trials off.
+							TrialAllowed = false
+							HandleRole(role, index, TrialAllowed, Cost)
+						} else {
+							// Redraw the parent embed.
+							ShowRoleShop(Page, Parent, Currency, Config, MenuID, msg, session, MessageID)
+						}
+					},
+				})
+			}
 		}
 
 		// Show the menu.
@@ -193,6 +283,21 @@ func ShowRoleShop(
 			continue
 		}
 
+		// Don't offer the role to the user if they have it already.
+		HasRole := false
+		for _, RoleID := range msg.Member.Roles {
+			if RoleID == v.RoleID {
+				// User has this role.
+				HasRole = true
+				break
+			}
+		}
+		if HasRole {
+			// The user has this role already.
+			ElementsSkipped++
+			continue
+		}
+
 		// Check the role paging order.
 		if ElementsFrom-ElementsSkipped > i {
 			continue
@@ -202,6 +307,10 @@ func ShowRoleShop(
 		}
 
 		// Set the technical information for the role.
+		if redis.Client.SIsMember("t:"+Role.ID, msg.Author.ID).Val() {
+			// Ensure people cannot infinitely use trials.
+			v.TrialAllowed = false
+		}
 		TechnicalInfo := "**Buy or trial this role by clicking the reaction.**"
 		if Config {
 			TechnicalInfo = "**Configure the role by clicking the reaction.**"
