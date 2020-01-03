@@ -191,7 +191,7 @@ func CreateConfigMenu(MenuID string, GuildID string, msg *discordgo.Message, cur
 			// Redraw the embed.
 			_ = client.MessageReactionsRemoveAll(ChannelID, MessageID)
 			currency.SaveCurrency(GuildID, cur)
-			CreateCurrencyMenu(MenuID, GuildID, msg, cur).Display(ChannelID, MessageID, client)
+			CreateConfigMenu(MenuID, GuildID, msg, cur).Display(ChannelID, MessageID, client)
 		},
 	})
 
@@ -235,7 +235,7 @@ func CreateConfigMenu(MenuID string, GuildID string, msg *discordgo.Message, cur
 			_ = client.MessageReactionsRemoveAll(ChannelID, MessageID)
 
 			// Redraw the embed.
-			CreateCurrencyMenu(MenuID, GuildID, msg, cur).Display(ChannelID, MessageID, client)
+			CreateConfigMenu(MenuID, GuildID, msg, cur).Display(ChannelID, MessageID, client)
 		},
 	})
 
@@ -303,7 +303,7 @@ func CreateConfigMenu(MenuID string, GuildID string, msg *discordgo.Message, cur
 			_ = client.ChannelMessageDelete(msg.ChannelID, confirmationOrNot.ID)
 
 			// Redraw the embed.
-			CreateCurrencyMenu(MenuID, GuildID, msg, cur).Display(ChannelID, MessageID, client)
+			CreateConfigMenu(MenuID, GuildID, msg, cur).Display(ChannelID, MessageID, client)
 		},
 	})
 
