@@ -92,6 +92,10 @@ func init() {
 				return
 			}
 			for _, v := range Embeds {
+				if len(v.Fields) == 0 {
+					// Do not send this embed.
+					continue
+				}
 				_, err := Args.Session.ChannelMessageSendComplex(c.ID, &discordgo.MessageSend{Embed: v})
 				if err != nil {
 					messages.Error(Args.Channel, "Failed to DM:", "Failed to DM you! Do you have DM's off or me blocked?", Args.Session)
