@@ -88,7 +88,7 @@ func ShowRoleShop(
 	if Config {
 		menu.Reactions.Add(embedmenus.MenuReaction{
 			Button: embedmenus.MenuButton{
-				Emoji:       "️⚒️️",
+				Emoji:       "⛏️",
 				Name:        "Add Role",
 				Description: "Allows you to add a role into the bot.",
 			},
@@ -97,7 +97,7 @@ func ShowRoleShop(
 				_ = session.MessageReactionsRemoveAll(msg.ChannelID, MessageID)
 
 				// Show the "Add role" screen.
-				addRole(msg, MessageID, MenuID, session, Currency, &roleShopConfig{}, &menu)
+				addRole(msg, MessageID, MenuID, session, Currency, &roleShopConfig{}, &menu, Parent, Page)
 			},
 		})
 	}
