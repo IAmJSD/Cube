@@ -5,8 +5,9 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/jakemakesstuff/Cube/cube/categories"
 	"github.com/jakemakesstuff/Cube/cube/command_processor"
-	guildscount "github.com/jakemakesstuff/Cube/cube/guilds_count"
+	"github.com/jakemakesstuff/Cube/cube/guilds_count"
 	"github.com/jakemakesstuff/Cube/cube/messages"
+	"github.com/jakemakesstuff/Cube/cube/redis"
 	"github.com/jakemakesstuff/Cube/cube/utils"
 	"runtime"
 )
@@ -53,6 +54,11 @@ func init() {
 					{
 						Name:   "Memory Allocated:",
 						Value:  fmt.Sprintf("%v MB", m.Alloc/1024/1024),
+						Inline: true,
+					},
+					{
+						Name:   "Redis Keys:",
+						Value:  fmt.Sprintf("%v", redis.Client.DbSize().Val()),
 						Inline: true,
 					},
 				}, Args.Session,
