@@ -96,7 +96,8 @@ func ShowRoleShop(
 				// Remove all reactions.
 				_ = session.MessageReactionsRemoveAll(msg.ChannelID, MessageID)
 
-				// TODO: Add role screen!
+				// Show the "Add role" screen.
+				addRole(msg, MessageID, MenuID, session, Currency, &roleShopConfig{}, &menu)
 			},
 		})
 	}
@@ -319,7 +320,11 @@ func ShowRoleShop(
 		}
 
 		// Get the role description.
-		Description := v.Description + "\n" + TechnicalInfo
+		Emoji := "💵"
+		if Currency.Emoji != nil {
+			Emoji = *Currency.Emoji
+		}
+		Description := v.Description + "\n" + TechnicalInfo + "\n**Cost:** " + Emoji + strconv.Itoa(v.Amount)
 
 		// Set the role button.
 		menu.Reactions.Add(embedmenus.MenuReaction{
