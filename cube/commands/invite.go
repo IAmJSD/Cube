@@ -11,7 +11,7 @@ func init() {
 		Description: "Gives you an invite to the bot.",
 		Category:    categories.INFORMATIONAL,
 		Function: func(Args *commandprocessor.CommandArgs) {
-			InviteURL := "https://discordapp.com/oauth2/authorize?client_id=" + Args.Session.State.User.ID + "&scope=bot&permissions=1211231296"
+			InviteURL := "https://discordapp.com/oauth2/authorize?client_id=" + Args.Session.State.User.ID + "&scope=bot&permissions=1546775744"
 			messages.GenericText(
 				Args.Channel, "Invite:",
 				"You can invite the bot [here]("+InviteURL+").",
