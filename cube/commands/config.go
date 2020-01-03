@@ -153,13 +153,13 @@ func CurrencyDropsMenu(Parent embedmenus.EmbedMenu, msg *discordgo.Message, Mess
 	Menu.Display(msg.ChannelID, MessageID, client)
 }
 
-// CreateCurrencyMenu is used to create the currency config menu.
-func CreateCurrencyMenu(MenuID string, GuildID string, msg *discordgo.Message, cur *currency.Currency) *embedmenus.EmbedMenu {
+// CreateConfigMenu is used to create the config menu.
+func CreateConfigMenu(MenuID string, GuildID string, msg *discordgo.Message, cur *currency.Currency) *embedmenus.EmbedMenu {
 	// Creates the embed menu.
 	Menu := embedmenus.NewEmbedMenu(
 		discordgo.MessageEmbed{
-			Title:       "Cube Currency Configuration",
-			Description: "Using this menu, you can configure Cube's currency.",
+			Title:       "Cube Configuration",
+			Description: "Using this menu, you can configure Cube's main functionality.",
 			Color:       styles.Generic,
 		}, &embedmenus.MenuInfo{
 			MenuID: MenuID,
@@ -312,8 +312,8 @@ func CreateCurrencyMenu(MenuID string, GuildID string, msg *discordgo.Message, c
 }
 
 func init() {
-	commandprocessor.Commands["currencyconfig"] = &commandprocessor.Command{
-		Description:      "Used to configure the currency in this guild.",
+	commandprocessor.Commands["config"] = &commandprocessor.Command{
+		Description:      "Used to configure the bots core functionality in this guild.",
 		Category:         categories.ADMINISTRATOR,
 		PermissionsCheck: permissions.ADMINISTRATOR,
 		Function: func(Args *commandprocessor.CommandArgs) {
@@ -334,7 +334,7 @@ func init() {
 			}
 
 			// Show the embed.
-			CreateCurrencyMenu(MenuID, Args.Message.GuildID, Args.Message, cur).Display(Args.Channel.ID, m.ID, Args.Session)
+			CreateConfigMenu(MenuID, Args.Message.GuildID, Args.Message, cur).Display(Args.Channel.ID, m.ID, Args.Session)
 		},
 	}
 }
