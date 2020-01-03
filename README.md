@@ -1,4 +1,4 @@
-[logo](./branding.svg)
+[logo](./branding.png)
 
 **A bot designed to run the economy of your Discord server with very little configuration required. You can invite the bot [here](https://discordapp.com/oauth2/authorize?client_id=660941659613298689&scope=bot&permissions=1546775744).**
 
