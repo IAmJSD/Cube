@@ -10,6 +10,7 @@ import (
 	"github.com/jakemakesstuff/Cube/cube/message_waiter"
 	"github.com/jakemakesstuff/Cube/cube/permissions"
 	"github.com/jakemakesstuff/Cube/cube/reaction_waiter"
+	"github.com/jakemakesstuff/Cube/cube/role_shop"
 	"github.com/jakemakesstuff/Cube/cube/styles"
 	"github.com/jakemakesstuff/Cube/cube/wallets"
 	"strconv"
@@ -254,11 +255,27 @@ func CreateCurrencyMenu(MenuID string, GuildID string, msg *discordgo.Message, c
 		},
 	})
 
+	// Used to show the role shop config.
+	Menu.Reactions.Add(embedmenus.MenuReaction{
+		Button: embedmenus.MenuButton{
+			Emoji:       "⛏️",
+			Name:        "Role Shop Configuration",
+			Description: "Allows you to configure the role shop.",
+		},
+		Function: func(ChannelID string, MessageID string, _ *embedmenus.EmbedMenu, client *discordgo.Session) {
+			// Remove all reactions.
+			_ = client.MessageReactionsRemoveAll(ChannelID, MessageID)
+
+			// Show the role shop config.
+			roleshop.ShowRoleShop(1, &Menu, cur, true, MenuID, msg, client, MessageID)
+		},
+	})
+
 	// Used to purge all guild wallets.
 	Menu.Reactions.Add(embedmenus.MenuReaction{
 		Button: embedmenus.MenuButton{
 			Emoji:       "💥",
-			Name:        "Purge ALL guild wallets",
+			Name:        "Purge ALL Guild Wallets",
 			Description: "Can be used to start fresh with a currency. Here be dragons, you will be asked to confirm!",
 		},
 		Function: func(ChannelID string, MessageID string, menu *embedmenus.EmbedMenu, client *discordgo.Session) {

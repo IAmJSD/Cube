@@ -233,6 +233,9 @@ func ShowRoleShop(
 						// Remove all reactions.
 						_ = session.MessageReactionsRemoveAll(msg.ChannelID, MessageID)
 
+						// Add the role to trial.
+						_ = session.GuildMemberRoleAdd(msg.GuildID, msg.Author.ID, role.ID)
+
 						// Wait for the trial to be over.
 						_, _ = session.ChannelMessageEditComplex(&discordgo.MessageEdit{
 							Content: nil,
@@ -289,7 +292,9 @@ func ShowRoleShop(
 		for _, RoleID := range msg.Member.Roles {
 			if RoleID == v.RoleID {
 				// User has this role.
-				HasRole = true
+				if !Config {
+					HasRole = true
+				}
 				break
 			}
 		}
@@ -324,7 +329,7 @@ func ShowRoleShop(
 		if Currency.Emoji != nil {
 			Emoji = *Currency.Emoji
 		}
-		Description := v.Description + "\n" + TechnicalInfo + "\n**Cost:** " + Emoji + strconv.Itoa(v.Amount)
+		Description := v.Description + "\n" + TechnicalInfo + "\n**Cost:** " + Emoji + " " + strconv.Itoa(v.Amount)
 
 		// Set the role button.
 		menu.Reactions.Add(embedmenus.MenuReaction{
@@ -334,6 +339,7 @@ func ShowRoleShop(
 				Description: Description,
 			},
 			Function: func(_ string, _ string, _ *embedmenus.EmbedMenu, _ *discordgo.Session) {
+				_ = session.MessageReactionsRemoveAll(msg.ChannelID, MessageID)
 				HandleRole(Role, i, v.TrialAllowed, v.Amount)
 			},
 		})
