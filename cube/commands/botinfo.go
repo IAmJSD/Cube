@@ -24,7 +24,7 @@ func init() {
 			// Render the information.
 			messages.GenericText(
 				Args.Channel, "Cube Information:",
-				"Cube is a open source bot hosted by JakeMakesStuff#0001.",
+				"Cube is an open source bot hosted by JakeMakesStuff#0001.",
 				[]*discordgo.MessageEmbedField{
 					{
 						Name:   "Library Version:",
