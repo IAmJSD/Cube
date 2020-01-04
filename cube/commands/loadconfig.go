@@ -10,9 +10,19 @@ import (
 	"github.com/jakemakesstuff/Cube/cube/redis"
 	"github.com/jakemakesstuff/Cube/cube/wallets"
 	"github.com/jakemakesstuff/structuredhttp"
+	"strings"
 	"sync"
 	"time"
 )
+
+// aliasFormatter is used to format an alias so it is oven ready.
+func aliasFormatter(Data string) string {
+	s := strings.Split(Data, " ")
+	if len(s) == 0 {
+		s[0] = ""
+	}
+	return strings.ToLower(s[0])
+}
 
 func init() {
 	commandprocessor.Commands["loadconfig"] = &commandprocessor.Command{
@@ -81,6 +91,14 @@ func init() {
 				}(k, Value)
 			}
 			wg.Wait()
+
+			// Handles loading in all of the aliases.
+			redis.Client.Del("a:" + Args.Message.GuildID)
+			for k, v := range dump.Aliases {
+				k = aliasFormatter(k)
+				v = aliasFormatter(v)
+				redis.Client.SAdd("a:"+Args.Message.GuildID, k+" "+v)
+			}
 
 			// Send a success message.
 			messages.GenericText(Args.Channel, "Config loaded:", "Successfully loaded the sent config.", nil, Args.Session)

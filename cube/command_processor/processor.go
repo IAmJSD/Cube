@@ -69,10 +69,30 @@ func Processor(Message *discordgo.Message, Channel *discordgo.Channel, Session *
 	Content = Content[CommandLen:]
 
 	// Get the command from the map.
-	cmd, ok := Commands[strings.ToLower(CommandName)]
+	cmdlower := strings.ToLower(CommandName)
+	cmd, ok := Commands[cmdlower]
 	if !ok {
-		// This is not a command.
-		return
+		// This is not a command. Check aliases.
+		found := false
+		Aliases := redis.Client.SMembers("a:" + Message.GuildID).Val()
+		for _, v := range Aliases {
+			ssplit := strings.Split(v, " ")
+			if ssplit[0] == cmdlower {
+				// This is an alias.
+				cmdlower = ssplit[1]
+				cmd, ok = Commands[cmdlower]
+				if !ok {
+					// This isn't a valid command.
+					return
+				}
+				found = true
+				break
+			}
+		}
+		if !found {
+			// No alias found!
+			return
+		}
 	}
 
 	// Defines the main command args struct.

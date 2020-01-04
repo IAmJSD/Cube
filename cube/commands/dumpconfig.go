@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/bwmarrin/discordgo"
 	"github.com/getsentry/sentry-go"
+	"github.com/jakemakesstuff/Cube/cube/aliases"
 	"github.com/jakemakesstuff/Cube/cube/categories"
 	"github.com/jakemakesstuff/Cube/cube/command_processor"
 	"github.com/jakemakesstuff/Cube/cube/currency"
@@ -19,6 +20,7 @@ type dumpedConfig struct {
 	Prefix         *string
 	CurrencyConfig *currency.Currency
 	Wallets        map[string]int
+	Aliases        map[string]string
 }
 
 func init() {
@@ -36,6 +38,7 @@ func init() {
 			Config := dumpedConfig{
 				Wallets:        wallets.GetAll(Args.Message.GuildID),
 				CurrencyConfig: currency.GetCurrency(Args.Message.GuildID),
+				Aliases:        aliases.GetAliases(Args.Message.GuildID),
 				Prefix:         Prefix,
 			}
 
