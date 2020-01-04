@@ -23,8 +23,8 @@ func init() {
 		// Handle the status.
 		go func() {
 			for {
-				_ = s.UpdateStatus(0, fmt.Sprintf("Cube | Serving %v guilds | c!help", guildscount.Count()))
-				time.Sleep(time.Minute)
+				_ = s.UpdateStatus(0, fmt.Sprintf("Cube | Serving %v guilds", guildscount.Count()))
+				time.Sleep(time.Second * 10)
 			}
 		}()
 	})
