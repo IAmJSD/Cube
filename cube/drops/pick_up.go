@@ -23,6 +23,11 @@ func PickUp(ID string, ChannelID string, MessageID string, GuildID string, UserI
 		return
 	}
 
+	// If the guild ID does not match, return here.
+	if drop.message.GuildID != GuildID {
+		return
+	}
+
 	// Delete the drop.
 	dropIDsLock.Lock()
 	delete(dropIDs, ID)
