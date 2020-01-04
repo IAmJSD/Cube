@@ -11,6 +11,7 @@ import (
 type dropInfo struct {
 	message *discordgo.Message
 	amount  int
+	guild   string
 }
 
 // DropIDs are all of the ID's which are used in drops.
@@ -30,7 +31,7 @@ func randString(n int) string {
 }
 
 // ExecuteDrop is used to run a drop.
-func ExecuteDrop(ChannelID string, Session *discordgo.Session, Amount int, Prefix string, Description string, ImageURL *string) {
+func ExecuteDrop(ChannelID string, GuildID string, Session *discordgo.Session, Amount int, Prefix string, Description string, ImageURL *string) {
 	// Generate the ID.
 	ID := randString(5)
 
@@ -60,6 +61,7 @@ func ExecuteDrop(ChannelID string, Session *discordgo.Session, Amount int, Prefi
 		dropIDs[ID] = &dropInfo{
 			message: m,
 			amount:  Amount,
+			guild:   GuildID,
 		}
 		dropIDsLock.Unlock()
 	}

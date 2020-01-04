@@ -24,7 +24,7 @@ func PickUp(ID string, ChannelID string, MessageID string, GuildID string, UserI
 	}
 
 	// If the guild ID does not match, return here.
-	if drop.message.GuildID != GuildID {
+	if drop.guild != GuildID {
 		return
 	}
 

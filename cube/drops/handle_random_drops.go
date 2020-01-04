@@ -43,5 +43,5 @@ func HandleRandomDrops(msg *discordgo.Message, Session *discordgo.Session) {
 	if cur.DropsAmount != nil {
 		DropsAmount = *cur.DropsAmount
 	}
-	ExecuteDrop(msg.ChannelID, Session, DropsAmount, Prefix, *cur.Emoji+" "+strconv.Itoa(DropsAmount)+" just dropped on the floor.", cur.DropsImage)
+	ExecuteDrop(msg.ChannelID, msg.GuildID, Session, DropsAmount, Prefix, *cur.Emoji+" "+strconv.Itoa(DropsAmount)+" just dropped on the floor.", cur.DropsImage)
 }
