@@ -17,3 +17,9 @@ var CURRENCY = &Category{
 	Name:        "Currency",
 	Description: "Currency commands are commands which handle a guilds currency.",
 }
+
+// GAMBLING commands are commands which allow the user to gamble their money.
+var GAMBLING = &Category{
+	Name:        "Gambling",
+	Description: "Gambling commands are commands which allow the user to gamble their money.",
+}
