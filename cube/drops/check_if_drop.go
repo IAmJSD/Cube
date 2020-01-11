@@ -8,12 +8,12 @@ func checkIfDrop(ChannelID string) bool {
 	Chance := 4
 
 	// Get the messages per minute.
-	count := getMessagesPerMin(ChannelID)
-	if count > 5 {
+	Count := getMessagesPerMin(ChannelID)
+	if Count > 5 {
 		// Max out at 5% extra.
-		count = 5
+		Count = 5
 	}
-	Chance += count
+	Chance += Count
 
 	// Get a number between 1 and 100.
 	n := rand.Intn(100-1) + 1
