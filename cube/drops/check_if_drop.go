@@ -4,14 +4,14 @@ import "math/rand"
 
 // checkIfDrop is used to decide if to randomly drop.
 func checkIfDrop(ChannelID string) bool {
-	// Set the baseline chance to 4%.
-	Chance := 4
+	// Set the baseline chance to 2%.
+	Chance := 2
 
 	// Get the messages per minute.
 	Count := getMessagesPerMin(ChannelID)
-	if Count > 5 {
-		// Max out at 5% extra.
-		Count = 5
+	if Count > 2 {
+		// Max out at 2% extra.
+		Count = 2
 	}
 	Chance += Count
 
