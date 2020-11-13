@@ -22,9 +22,6 @@ func init() {
 		Addr:     Addr,
 		Password: Password,
 		DB:       0,
-		TLSConfig: &tls.Config{
-			InsecureSkipVerify: true,
-		},
 	})
 	_, err := Client.Ping().Result()
 	if err != nil {
