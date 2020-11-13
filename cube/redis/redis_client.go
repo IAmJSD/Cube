@@ -1,7 +1,6 @@
 package redis
 
 import (
-	"crypto/tls"
 	"github.com/go-redis/redis"
 	"os"
 )
